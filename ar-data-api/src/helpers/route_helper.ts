@@ -1,0 +1,48 @@
+import * as mongoose from "mongoose";
+import Route from "../models/route";
+
+export class RouteHelper {
+  public static async addRoute(
+    name: string,
+    associationID: string,
+    associationName: string,
+    color: string,
+  ): Promise<any> {
+    console.log(
+      `\n\n🌀  🌀  🌀  RouteHelper: addRoute   🍀   ${name} -   🍀   ${associationID}   🍀   ${associationName}\n`
+    );
+    console.log(
+      // tslint:disable-next-line: max-line-length
+      `\n👽 👽 👽 👽  RouteHelper: attempting MongoDB write using Typegoose  🍎  getModelForClass  .......... 👽 👽 👽\n`
+    );
+
+    const routeModel = new Route().getModelForClass(Route);
+    const u = new routeModel({
+      associationID,
+      associationName,
+      color,
+      name,
+    });
+    const m = await u.save();
+    console.log(
+      `\n\n💙  💚  💛   RouteHelper: Yebo Gogo!!!! - MongoDB has saved ${name} !!!!!  💙  💚  💛`
+    );
+
+    const ass = await routeModel.findByName(
+      "MongoDataX Taxi Route",
+    );
+    console.log(`💛 💛 💛 💛  Route found in Mongo: 💚  ${ass}`);
+    console.log(ass);
+    console.log(
+      `🏓  db: ${m.db.db.databaseName} 💛 💛 collection: ${
+        m.collection.collectionName
+      } 💙 💙  id: ${m.id}`
+    );
+
+    return m;
+  }
+
+  public static async getRoutes(): Promise<any> {
+    console.log(` 🌀 getRoutes ....   🌀  🌀  🌀 `);
+  }
+}
