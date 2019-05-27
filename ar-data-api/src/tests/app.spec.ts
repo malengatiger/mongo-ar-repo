@@ -3,7 +3,7 @@ import * as mocha from "mocha";
 import MyClass from "../routes/fake";
 
 describe("\n💀 💀 💀 💀 💀  🎈  AR MongoDB API unit tests   🎈  ☘️ 🍀", () => {
-  it("\n💚  💙  💜   should return 12", () => {
+  it("\n💚  💙  💜   should return 12 afer summing 5 + 7", () => {
     console.log(
       `\n\n💀  💀   Running fake test. 💀  🎈 🎈 🎈 🎈  just to get going ....`
     );
