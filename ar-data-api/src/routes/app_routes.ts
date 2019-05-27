@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { AssocHelper } from "./../helpers/association_helper";
+import { RouteHelper } from "../helpers/route_helper";
+import { AssociationHelper } from "./../helpers/association_helper";
 
 export class Routes {
   public routes(app): void {
@@ -23,11 +24,11 @@ export class Routes {
     });
     app.route("/associations").post(async (req: Request, res: Response) => {
       console.log(
-        `\n\n💦  associations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        `\n\n💦  POST: /associations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
       );
       console.log(req.body);
       try {
-        const result = await AssocHelper.addAssociation(
+        const result = await AssociationHelper.addAssociation(
           req.body.name,
           req.body.email,
           req.body.cellphone,
@@ -44,5 +45,31 @@ export class Routes {
         });
       }
     });
+    /////////
+    app.route("/routes").post(async (req: Request, res: Response) => {
+        console.log(
+          `\n\n💦  POST: /routes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        );
+        console.log(req.body);
+        try {
+          const result = await RouteHelper.addRoute(
+            req.body.name,
+            req.body.associationID,
+            req.body.associationName,
+            req.body.color,
+          );
+          console.log("about to return result from Helper ............");
+          res.status(200).json({
+// tslint:disable-next-line: max-line-length
+            message: `🏓  🏓  🏓  route: ${req.body.name} : 🏓  ${req.body.associationName}: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+            result,
+          });
+        } catch (err) {
+          res.status(400).json({
+            error: err,
+            message: `👿 👿 👿  AR MongoDB API fucked up`,
+          });
+        }
+      });
   }
 }
