@@ -2,11 +2,26 @@ import * as mongoose from "mongoose";
 import Route from "../models/route";
 
 export class RouteHelper {
+  public static async onRouteAdded(event: any) {
+    console.log(`Route event has occured ....`);
+    console.log(event);
+    // tslint:disable-next-line: max-line-length
+    console.log(
+      `operationType: 👽 👽 👽  ${
+        event.operationType
+      },  route in stream:   🍀   🍀  ${event.fullDocument.name} 🍎  _id: ${
+        event.fullDocument._id
+      } 🍎 `
+    );
+    console.log(
+      `\n👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 RouteHelper: Happiness Two: 🍎 🍎  onRouteAdded, Houston!! 👽 👽 👽\n\n`
+    );
+  }
   public static async addRoute(
     name: string,
     associationID: string,
     associationName: string,
-    color: string,
+    color: string
   ): Promise<any> {
     console.log(
       `\n\n🌀  🌀  🌀  RouteHelper: addRoute   🍀   ${name} -   🍀   ${associationID}   🍀   ${associationName}\n`
@@ -21,16 +36,14 @@ export class RouteHelper {
       associationID,
       associationName,
       color,
-      name,
+      name
     });
     const m = await u.save();
     console.log(
       `\n\n💙  💚  💛   RouteHelper: Yebo Gogo!!!! - MongoDB has saved ${name} !!!!!  💙  💚  💛`
     );
 
-    const ass = await routeModel.findByName(
-      "MongoDataX Taxi Route",
-    );
+    const ass = await routeModel.findByName("MongoDataX Taxi Route");
     console.log(`💛 💛 💛 💛  Route found in Mongo: 💚  ${ass}`);
     console.log(ass);
     console.log(

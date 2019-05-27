@@ -1,3 +1,4 @@
+import { RouteHelper } from './helpers/route_helper';
 import * as bodyParser from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
@@ -10,12 +11,14 @@ const appName = "AR MongoDB API";
 const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
 import { Routes } from "./routes/app_routes";
 
+let mongoClient;
 mongoose
   .connect(mongoConnection, {
     useNewUrlParser: true,
   })
   .then((client) => {
     console.log(client);
+    mongoClient = client;
     const collection = client.connection.collection("associations");
     const collection2 = client.connection.collection("routes");
     console.log(
@@ -27,6 +30,7 @@ mongoose
     const stream2 = collection2.watch();
     stream.on("change", (event) => {
       console.log(`\n🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  🍎  stream onChange fired!  🍎  🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆`);
+
       // tslint:disable-next-line: max-line-length
       console.log(
         `operationType: 👽 👽 👽  ${
@@ -41,17 +45,7 @@ mongoose
     });
     stream2.on("change", (event) => {
         console.log(`\n🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  🍎  stream2 onChange fired!  🍎  🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆`);
-        // tslint:disable-next-line: max-line-length
-        console.log(
-          `operationType: 👽 👽 👽  ${
-            event.operationType
-          },  route in stream:   🍀   🍀  ${
-            event.fullDocument.name
-          } 🍎  _id: ${event.fullDocument._id} 🍎 `,
-        );
-        console.log(
-          `\n👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 Happiness Two, Houston!! 👽 👽 👽\n\n`,
-        );
+        RouteHelper.onRouteAdded(event);
       });
   })
   .catch((err) => {
