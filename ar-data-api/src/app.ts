@@ -7,7 +7,7 @@ const mPort = process.env.PORT || 3000;
 const password = process.env.MONGODB_PASSWORD || "aubrey3";
 const user = process.env.MONGODB_USER || "aubs";
 const appName = "AR MongoDB API";
-const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/test?retryWrites=true`;
+const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
 import {Routes} from "./routes/app_routes";
 
 mongoose.connect(
