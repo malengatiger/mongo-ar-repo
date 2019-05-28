@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import * as mocha from "mocha";
 import Association from "../models/association";
-import MyClass from "../routes/fake";
+import Util from "../routes/util";
 import { AssociationHelper } from "./../helpers/association_helper";
 
 describe("\n💀 💀 💀 💀 💀  🎈  AR MongoDB API unit tests   🎈  ☘️ 🍀", () => {
@@ -9,7 +9,7 @@ describe("\n💀 💀 💀 💀 💀  🎈  AR MongoDB API unit tests   🎈  �
     console.log(
       `\n\n💀  💀   Running fake test. 💀  🎈 🎈 🎈 🎈  just to get going ....`
     );
-    const result = MyClass.sum(5, 7);
+    const result = Util.sum(5, 7);
 
     expect(result).to.equal(12);
   });

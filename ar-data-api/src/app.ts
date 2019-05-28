@@ -1,3 +1,4 @@
+import { VehicleExpressRoutes } from './routes/vehicle_routes';
 import * as bodyParser from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
@@ -36,6 +37,7 @@ class AftaRobotApp {
   public routeRoutes: RouteExpressRoutes = new RouteExpressRoutes();
   public associationRoutes: AssociationExpressRoutes = new AssociationExpressRoutes();
   public appRoutes: AppExpressRoutes = new AppExpressRoutes();
+  public vehicleRoutes: VehicleExpressRoutes = new VehicleExpressRoutes();
 
   constructor() {
     console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside AftaRobotApp constructor `);
@@ -46,6 +48,7 @@ class AftaRobotApp {
     this.routeRoutes.routes(this.app);
     this.associationRoutes.routes(this.app);
     this.appRoutes.routes(this.app);
+    this.vehicleRoutes.routes(this.app);
   }
 
   public listen() {
