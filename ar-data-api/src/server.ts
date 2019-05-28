@@ -1,7 +1,7 @@
 import AftaRobotApp from "./app";
 
 console.log(
-  `\n\n☘️ ☘️  server.ts: 🌽 🌽 🌽   Constructing new App object .... 🌽 🌽 🌽 `
+  `\n\n☘️ ☘️  server.ts: 🌽 🌽 🌽   Bootstrapping new AftaRobotApp  .... 🌽 🌽 🌽 `
 );
 const app = new AftaRobotApp();
 

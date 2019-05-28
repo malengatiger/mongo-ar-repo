@@ -1,67 +1,34 @@
 import * as bodyParser from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
-import * as morgan from "morgan";
-import { RouteHelper } from "./helpers/route_helper";
 import {  AppExpressRoutes } from "./routes/app_routes";
 import { LandmarkExpressRoutes } from "./routes/landmark_routes";
-const app = express();
 const mPort = process.env.PORT || 3000;
 const password = process.env.MONGODB_PASSWORD || "aubrey3";
 const user = process.env.MONGODB_USER || "aubs";
 const appName = "AR MongoDB API";
 const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
+import MongoListeners from "./listeners";
 import AssociationExpressRoutes from "./routes/assoc_routes";
 import { RouteExpressRoutes } from "./routes/route_routes";
 
-let mongoClient;
 console.log(`\n\n\n🧡 💛   AftaRobot MongoDB API ... ☘️  starting  ☘️  ${new Date().toISOString()}   🧡 💛\n`);
 mongoose
   .connect(mongoConnection, {
     useNewUrlParser: true,
   })
   .then((client) => {
-    console.log(client);
-    mongoClient = client;
-    const collection = client.connection.collection("associations");
-    const collection2 = client.connection.collection("routes");
-    console.log(
-      `🔆 🔆 🔆  creating stream ... and watching ... 👽 👽 👽 ${
-        collection.collectionName
-      }  👽 👽 👽 ${collection2.collectionName}`,
-    );
-    const stream = collection.watch();
-    const stream2 = collection2.watch();
-    stream.on("change", (event) => {
-      console.log(`\n🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  🍎  stream onChange fired!  🍎  🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆`);
-
-      // tslint:disable-next-line: max-line-length
-      console.log(
-        `operationType: 👽 👽 👽  ${
-          event.operationType
-        },  association in stream:   🍀   🍀  ${
-          event.fullDocument.name
-        } 🍎  _id: ${event.fullDocument._id} 🍎 `,
-      );
-      console.log(
-        `\n👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 Happiness One, Houston!! 👽 👽 👽\n\n`,
-      );
-    });
-    stream2.on("change", (event) => {
-        console.log(`\n🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆  🍎  stream2 onChange fired!  🍎  🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆 🔆`);
-        RouteHelper.onRouteAdded(event);
-      });
+    console.log(`\n🔆 🔆 🔆 🔆 🔆 🔆  Mongo connected ... 🔆 🔆 🔆  💛  ${new Date()}  💛 💛`);
+    console.log(`\n🍎  🍎  ${appName} :: database:  ☘️  client version: ${client.version}  ☘️  is OK   🍎  🍎 `);
+    console.log(`\n🍎  🍎  🍎  🍎  MongoDB config ...${JSON.stringify(mongoose.connection.config)}`);
+    console.log(`\n🍎  🍎  🍎  🍎  MongoDB collections ...`);
+    console.log(mongoose.connection.collections);
+    MongoListeners.listen(client);
   })
   .catch((err) => {
     console.error(err);
   });
-console.log(`\nMongoose connected ... 🔆 🔆 🔆 🔆 🔆`);
-
-// function loggerMiddleware(request: express.Request, response: express.Response, next) {
-//     console.log(`🔆 🔆 request method: 🍎  ${request.method} path: 🍎  ${request.path}`);
-//     next();
-//   }
-
+//
 class AftaRobotApp {
   public app: express.Application;
   public port: number;
@@ -71,7 +38,7 @@ class AftaRobotApp {
   public appRoutes: AppExpressRoutes = new AppExpressRoutes();
 
   constructor() {
-    console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside App constructor `);
+    console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside AftaRobotApp constructor `);
     this.app = express();
     this.port = 5000;
     this.initializeMiddlewares();

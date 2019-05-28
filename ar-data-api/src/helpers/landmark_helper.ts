@@ -72,17 +72,13 @@ export class LandmarkHelper {
   }
 
   public static async findAll(): Promise<any> {
-    console.log(` 🌀 findAll ....   🌀  🌀  🌀 `);
+    console.log(` 🌀 LandmarkHelper: findAll ....   🌀  🌀  🌀 `);
     const landmarkModel = new Landmark().getModelForClass(Landmark);
-    landmarkModel.find((err: any, landmarks: any) => {
-      if (err) {
-        throw new Error(`Unable to find landmarks: ${err}`);
-      } else {
-        console.log(` 🌀 findAll ....  landmarks found: ${landmarks.length} 🌀  🌀  🌀 `);
-        console.log(landmarks);
-        return landmarks;
-      }
-    });
+    const list = await landmarkModel.find();
+    console.log(` 🌀 LandmarkHelper: findAll .... found: ${list.length}   🌀  🌀  🌀 `);
+
+    console.log(list);
+    return list;
   }
   public static async findByLocation(
     latitude: number,

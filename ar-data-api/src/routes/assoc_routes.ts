@@ -31,6 +31,24 @@ export class AssociationExpressRoutes {
         });
       }
     });
+
+    app.route("/getAssociations").post(async (req: Request, res: Response) => {
+      console.log(
+        `\n\n💦  POST: /getAssociations requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+      );
+      try {
+        const result = await AssociationHelper.getAssociations();
+        res.status(200).json({
+          message: `🏓  🏓  🏓  getAssociations OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+          result,
+        });
+      } catch (err) {
+        res.status(400).json({
+          error: err,
+          message: `👿 👿 👿  AR MongoDB API fucked up`,
+        });
+      }
+    });
   }
 }
 export default AssociationExpressRoutes;

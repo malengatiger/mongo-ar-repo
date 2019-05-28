@@ -43,7 +43,7 @@ export class RouteExpressRoutes {
         console.log("\n................ about to return result from Helper ............");
         console.log(result);
         res.status(200).json({
-          message: `🏓  🏓  getRoutes:: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+          message: `🏓  🏓  getRoutes OK :: 🔆 ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
           result,
         });
       } catch (err) {

@@ -79,7 +79,7 @@ export class LandmarkExpressRoutes {
     });
     app.route("/getLandmarks").post(async (req: Request, res: Response) => {
       console.log(
-        `\n\n💦  POST: /addLandmarkRoute requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+        `\n\n💦  POST: /getLandmarks requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
       );
       try {
         const result = await LandmarkHelper.findAll();
@@ -88,6 +88,7 @@ export class LandmarkExpressRoutes {
           result,
         });
       } catch (err) {
+        console.error(err);
         res.status(400).json({
           error: err,
           message: `👿 👿 👿  AR MongoDB API fucked up`,

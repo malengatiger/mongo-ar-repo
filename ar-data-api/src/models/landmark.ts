@@ -79,7 +79,7 @@ class Landmark extends Typegoose {
   @prop({ required: true })
   public location?: any;
   //
-  @arrayProp({ items: Route, required: true, default: [] })
+  @arrayProp({ items: Route, default: [] })
   public routes?: Route[];
   //
   @prop({ required: true, default: "black" })

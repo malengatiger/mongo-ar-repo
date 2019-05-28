@@ -42,5 +42,21 @@ export class AssociationHelper {
 
   public static async getAssociations(): Promise<any> {
     console.log(` 🌀 getAssociations ....   🌀  🌀  🌀 `);
+    const assocModel = new Association().getModelForClass(Association);
+    const list = await assocModel.find();
+    console.log(list);
+    return list;
+  }
+  public static async onAssociationAdded(event: any) {
+    console.log(`onAssociationAdded event has occured .... 👽 👽 👽`);
+    console.log(event);
+    console.log(
+      `operationType: 👽 👽 👽  ${
+        event.operationType
+      },  route in stream:   🍀   🍀  ${event.fullDocument.name} 🍎  _id: ${
+        event.fullDocument._id
+      } 🍎 `,
+    );
+
   }
 }
