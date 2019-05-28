@@ -5,7 +5,7 @@ export class AssociationHelper {
   public static async addAssociation(
     name: string,
     email: string,
-    cellphone: string
+    cellphone: string,
   ): Promise<any> {
     console.log(
       `\n\n🌀  🌀  🌀  AssocHelper: addAssociation   🍀   ${name} -   🍀   ${cellphone}   🍀   ${email}\n`
@@ -19,7 +19,7 @@ export class AssociationHelper {
     const u = new associationModel({
       cellphone,
       email,
-      name
+      name,
     });
     const m = await u.save();
     console.log(
@@ -34,7 +34,7 @@ export class AssociationHelper {
     console.log(
       `🏓  db: ${m.db.db.databaseName} 💛 💛 collection: ${
         m.collection.collectionName
-      } 💙 💙  id: ${m.id}`
+      } 💙 💙  id: ${m.id}`,
     );
 
     return m;

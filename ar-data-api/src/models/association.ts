@@ -24,6 +24,11 @@ class Association extends Typegoose {
       this.email = email;
       this.save();
     }
+    @instanceMethod
+    public updateCellphone(this: InstanceType<Association>, cellphone: string) {
+      this.cellphone = cellphone;
+      this.save();
+    }
   }
 
 export default Association;

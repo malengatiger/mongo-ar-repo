@@ -57,5 +57,8 @@ export class RouteHelper {
 
   public static async getRoutes(): Promise<any> {
     console.log(` 🌀 getRoutes ....   🌀  🌀  🌀 `);
+    const routeModel = new Route().getModelForClass(Route);
+    const list = await routeModel.find();
+    return list;
   }
 }
