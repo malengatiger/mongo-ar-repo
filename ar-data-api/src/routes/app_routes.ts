@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import Migrator from "../migration/migrator";
 
 export class AppExpressRoutes {
   public routes(app): void {
@@ -18,6 +19,16 @@ export class AppExpressRoutes {
       );
       res.status(200).json({
         message: `🏓  🏓 pinged : 💙  ${new Date()}  💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+      });
+    });
+    app.route("/startMigrator").post(async (req: Request, res: Response) => {
+      console.log(
+        `\n\n💦  /startMigrator!. 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+      );
+      const result = await Migrator.start();
+      res.status(200).json({
+        message: `🏓  🏓  startMigrator : 💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+        result,
       });
     });
   }

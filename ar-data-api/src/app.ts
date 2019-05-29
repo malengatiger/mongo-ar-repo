@@ -12,6 +12,7 @@ const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.n
 import MongoListeners from "./listeners";
 import AssociationExpressRoutes from "./routes/assoc_routes";
 import { RouteExpressRoutes } from "./routes/route_routes";
+import { CountryExpressRoutes } from './routes/country_routes';
 
 console.log(`\n\n\n🧡 💛   AftaRobot MongoDB API ... ☘️  starting  ☘️  ${new Date().toISOString()}   🧡 💛\n`);
 mongoose
@@ -38,6 +39,7 @@ class AftaRobotApp {
   public associationRoutes: AssociationExpressRoutes = new AssociationExpressRoutes();
   public appRoutes: AppExpressRoutes = new AppExpressRoutes();
   public vehicleRoutes: VehicleExpressRoutes = new VehicleExpressRoutes();
+  public countryRoutes: CountryExpressRoutes = new CountryExpressRoutes();
 
   constructor() {
     console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   Inside AftaRobotApp constructor `);
@@ -49,6 +51,7 @@ class AftaRobotApp {
     this.associationRoutes.routes(this.app);
     this.appRoutes.routes(this.app);
     this.vehicleRoutes.routes(this.app);
+    this.countryRoutes.routes(this.app);
   }
 
   public listen() {

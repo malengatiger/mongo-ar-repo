@@ -75,7 +75,6 @@ export class VehicleHelper {
     );
 
     const vehicleTypeModel = new VehicleType().getModelForClass(VehicleType);
-
     const u = new vehicleTypeModel({
       capacity,
       countryID,
@@ -97,13 +96,13 @@ export class VehicleHelper {
   public static async getVehiclesByOwner(ownerID: string): Promise<any> {
     console.log(` 🌀 getVehiclesByOwner ....   🌀  🌀  🌀 `);
     const VehicleModel = new Vehicle().getModelForClass(Vehicle);
-    const list = await VehicleModel.find({ownerID: ownerID});
+    const list = await VehicleModel.find({ownerID});
     return list;
   }
   public static async getVehiclesByAssociation(associationID: string): Promise<any> {
     console.log(` 🌀 getVehiclesByAssociation ....   🌀  🌀  🌀 `);
     const VehicleModel = new Vehicle().getModelForClass(Vehicle);
-    const list = await VehicleModel.find({associationID: associationID});
+    const list = await VehicleModel.find({associationID});
     return list;
   }
 
