@@ -17,23 +17,23 @@ class MongoListeners {
     const landmarkStream = landmarks.watch();
     //
     assocStream.on("change", (event) => {
-      console.log(
-        `\n🔆 🔆 🔆 🔆   🍎  assocStream onChange fired!  🍎  🔆 🔆 🔆 🔆 `,
-      );
+      // console.log(
+      //   `\n🔆 🔆 🔆 🔆   🍎  assocStream onChange fired!  🍎  🔆 🔆 🔆 🔆 `,
+      // );
       AssociationHelper.onAssociationAdded(event);
     });
     //
     routeStream.on("change", (event) => {
-      console.log(
-        `\n🔆 🔆 🔆 🔆   🍎  routeStream onChange fired!  🍎  🔆 🔆 🔆 🔆 `,
-      );
+      // console.log(
+      //   `\n🔆 🔆 🔆 🔆   🍎  routeStream onChange fired!  🍎  🔆 🔆 🔆 🔆 `,
+      // );
       RouteHelper.onRouteAdded(event);
     });
     //
     landmarkStream.on("change", (event) => {
-      console.log(
-        `\n🔆 🔆 🔆 🔆   🍎  landmarkStream onChange fired!  🍎  🔆 🔆 🔆 🔆 `,
-      );
+      // console.log(
+      //   `\n🔆 🔆 🔆 🔆   🍎  landmarkStream onChange fired!  🍎  🔆 🔆 🔆 🔆 `,
+      // );
       LandmarkHelper.onLandmarkAdded(event);
     });
   }

@@ -4,11 +4,10 @@ import Route from "../models/route";
 
 export class RouteHelper {
   public static async onRouteAdded(event: any) {
-    console.log(`Route event has occured ....`);
-    console.log(event);
     // tslint:disable-next-line: max-line-length
     console.log(
-      `operationType: 👽 👽 👽  ${event.operationType},  route in stream:  🍀  🍀  🍎 `,
+      `\n👽 👽 👽 onRouteChangeEvent: operationType: 👽 👽 👽  ${
+        event.operationType},  route in stream:  🍀  🍀  🍎 `,
     );
   }
   public static async addRoute(

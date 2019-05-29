@@ -1,19 +1,70 @@
+import { BulkWriteOpResultObject } from "mongodb";
 import * as mongoose from "mongoose";
 import Landmark from "../models/landmark";
 import Route from "../models/route";
 
 export class LandmarkHelper {
   public static async onLandmarkAdded(event: any) {
-    console.log(`Route event has occured ....`);
-    console.log(event);
-    // tslint:disable-next-line: max-line-length
     console.log(
-      `\noperationType: 👽 👽 👽  ${
+      `\n👽 👽 👽 onLandmarkChangeEvent: operationType: 👽 👽 👽  ${
         event.operationType
       },  landmark in stream:   🍀   🍀  ${
         event.fullDocument.landmarkName
       } 🍎  `,
     );
+  }
+  public static async addLandmarks(
+    landmarks: any[],
+    routeID: string,
+  ): Promise<any> {
+    const landmarkModel = new Landmark().getModelForClass(Landmark);
+    const routeModel = new Route().getModelForClass(Route);
+    const route = await routeModel.findById(routeID);
+    console.log(
+      `💦 💦  adding landmarks - 👽 route from mongo: 💦 💦 ${route.name}`,
+    );
+    const bulkWriteList: any = [];
+    for (const m of landmarks) {
+      if (m.latitude && m.longitude) {
+        const landmark = new landmarkModel({
+          landmarkName: m.landmarkName,
+          position: {
+            coordinates: [m.longitude, m.latitude],
+            type: "Point",
+          },
+          routes: [route],
+        });
+        bulkWriteList.push({
+          insertOne: {
+            document: landmark,
+          },
+        });
+      } else {
+        console.warn(`\n\n👿👿👿👿👿👿👿👿👿👿👿👿👿 coordinates missing for ${m.landmarkName} 👿👿👿👿👿👿👿`);
+      }
+    }
+    console.log(
+      `\n\n🍀 🍀 🍀 🍀  ..... about to write batch: ${
+        bulkWriteList.length
+      } 🍀 🍀`,
+    );
+    if (bulkWriteList.length === 0) {
+      console.error(`👿👿👿👿👿👿👿 Ignoring empty batch ... 🍀  ciao!`);
+      return;
+    }
+    try {
+      const res: BulkWriteOpResultObject = await landmarkModel.bulkWrite(
+        bulkWriteList,
+      );
+      console.log(
+        `\n\n🍀 🍀 🍀 🍀  Batched: ${landmarks.length}. inserted: 🍎  ${
+          res.insertedCount
+        } 🍎`,
+      );
+      console.log(res);
+    } catch (e) {
+      console.error(`👿👿👿👿👿👿👿 Something fucked up! 👿👿👿👿👿👿👿👿\n`, e);
+    }
   }
   public static async addLandmark(
     name: string,
@@ -110,7 +161,8 @@ export class LandmarkHelper {
       }  💙 💚 💛\n`,
     );
     list.forEach((m) => {
-      console.log(`💙 💚 💛  ${m.landmarkName} 🔆🔆 ${m.position.coordinates}`);
+      const route = m.routes[0];
+      console.log(`💙 💚  ${m.landmarkName}  🍎 ${route.name}  💛`);
     });
     return list;
   }

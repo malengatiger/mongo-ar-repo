@@ -61,13 +61,11 @@ class Migrator {
 
     const end = new Date().getTime();
     console.log(
-      `\n\n♻️ ♻️ ♻️ ♻️ ♻️ ♻️  Migrator has finished the job:  ❤️  ${end -
-        start / 1000} seconds elapsed\n\n`,
+      `\n\n♻️ ♻️ ♻️ ♻️ ♻️ ♻️  Migrator has finished the job:  ❤️  ${(end - start) / 1000} seconds elapsed\n\n`,
     );
 
     return {
-      migrator: `❤️️ ❤️ ❤️   Migrator has finished the job!  ❤️  ${end -
-        start / 1000} seconds elapsed  ❤️ ❤️ ❤️`,
+      migrator: `❤️️ ❤️ ❤️   Migrator has finished the job!  ❤️  ${(end - start) / 1000} seconds elapsed  ❤️ ❤️ ❤️`,
       xdate: new Date(),
     };
   }
@@ -205,6 +203,7 @@ class Migrator {
   public static async migrateRoutes(): Promise<any> {
     console.log(`\n\n🍎  Migrating routes ............. 🍎🍎🍎\n\n`);
 
+    const s = new Date().getTime();
     const routesQuerySnap = await fs.collection("routes").get();
     console.log(
       `🍎  Firestore routes found:  🍎  ${routesQuerySnap.docs.length}`,
@@ -216,10 +215,14 @@ class Migrator {
 
     // get assocs from mongo
     const assocs: any = await AssociationHelper.getAssociations();
-    console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  ${assocs.length} Associations from Mongo 💛 💛\n\n`);
+    console.log(
+      `\n👽 👽 👽 👽 👽 👽 👽 👽  ${
+        assocs.length
+      } Associations from Mongo 💛 💛\n\n`,
+    );
 
     let cnt = 0;
-    let cnt2 = 0;
+    const cnt2 = 0;
     for (const doc of routesQuerySnap.docs) {
       const route: any = doc.data();
       for (const association of assocs) {
@@ -230,33 +233,40 @@ class Migrator {
             route.color,
           );
           cnt++;
+          console.log(`\n💛 💛 💛  Migrator: route added  💛 ${mRoute.name}`);
           // get all route landmarks by name and migrate
           console.log(mRoute);
-          const list: any = [mRoute.id];
-          console.log(`route #${cnt} ....... about to loop thru landmarks ... 😍 ${mRoute.name}`);
-          for (const mdoc of landmarksQuerySnap.docs) {
-            if (mRoute.name === mdoc.data().routeName) {
-              const data = mdoc.data();
-              if (!data.latitude || !data.longitude) {
-                console.log(`\n\n👿👿👿👿👿👿👿👿👿 Missing coordinates: ${data.landmarkName} ... ignore\n\n`);
-              } else {
-              await LandmarkHelper.addLandmark(
-                data.landmarkName,
-                data.latitude,
-                data.longitude,
-                list,
-              );
-              cnt2++;
-              }
-            }
-          }
+          this.processRouteLandmarks(mRoute, landmarksQuerySnap);
         }
       }
     }
-    console.log(`\n🎸  🎸  🎸  routes migrated to Mongo: 🎀 ${cnt} \n`);
-    console.log(`\n🎸  🎸  🎸  landmarks migrated to Mongo: 🎀 ${cnt2} \n\n`);
+    const e = new Date().getTime();
+    const elapsed = `\n🎁 🎁 🎁  Migration took ${(e - s) /
+      100} elapsed seconds 🎁 🎁 🎁`;
+    console.log(`\n🎸  🎸  🎸  routes migrated to Mongo: 🎀  \n`);
+    console.log(`\n🎸  🎸  🎸  landmarks migrated to Mongo: 🎀  \n\n`);
+
+    console.log(elapsed);
   }
   private static countries: any = [];
+  private static async processRouteLandmarks(mRoute, landmarksQuerySnap) {
+    console.log(
+      `\n\nroute ....... about to loop thru landmarks ... 😍 ${mRoute.name}`,
+    );
+
+    const landmarks: any = [];
+    for (const mdoc of landmarksQuerySnap.docs) {
+      if (mRoute.name === mdoc.data().routeName) {
+        landmarks.push({
+          landmarkName: mdoc.data().landmarkName,
+          latitude: mdoc.data().latitude,
+          longitude: mdoc.data().longitude,
+        });
+      }
+    }
+    console.log(`\nsending 🎀 🎀 ${landmarks.length} landmarks to batch`);
+    await LandmarkHelper.addLandmarks(landmarks, mRoute.id);
+  }
 }
 
 export default Migrator;
