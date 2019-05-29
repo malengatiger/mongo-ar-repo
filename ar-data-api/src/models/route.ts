@@ -6,7 +6,7 @@ import {
   prop,
   Ref,
   staticMethod,
-  Typegoose
+  Typegoose,
 } from "typegoose";
 import Association from "./association";
 
@@ -14,10 +14,10 @@ class Route extends Typegoose {
   @staticMethod
   public static findByName(
     this: ModelType<Route> & typeof Route,
-    name: string
+    name: string,
   ) {
     console.log(
-      "#####  🥦  🥦  🥦 Finding route(s) by name:  💦  💦  💦  :: 🥦 " + name
+      "#####  🥦  🥦  🥦 Finding route(s) by name:  💦  💦  💦  :: 🥦 " + name,
     );
     return this.findOne({ name });
     // coulf be list, routes can have same or similar names for each association
@@ -26,11 +26,11 @@ class Route extends Typegoose {
   @staticMethod
   public static findByAssociationName(
     this: ModelType<Route> & typeof Route,
-    associationName: string
+    associationName: string,
   ) {
     console.log(
       "#####  🥦  🥦  🥦 Finding route by associationName:  💦  💦  💦  :: 🥦 " +
-        associationName
+        associationName,
     );
     return this.findOne({ associationName });
   }
@@ -38,7 +38,7 @@ class Route extends Typegoose {
   @staticMethod
   public static findByAssociationID(
     this: ModelType<Route> & typeof Route,
-    associationID: string
+    associationID: string,
   ) {
     console.log(
       "#####  🥦  🥦  🥦 Finding route by associationID:  💦  💦  💦  :: 🥦 " +
@@ -47,11 +47,11 @@ class Route extends Typegoose {
     return this.findOne({ associationID });
   }
   //
-  @prop({ required: true, index: true, trim: true })
+  @prop({ index: true, trim: true })
   public name?: string;
   //
-  @arrayProp({ items: Association })
-  public associations?: Association[];
+  @prop({ required: true })
+  public associations?: any[];
   //
   @prop({ required: true, default: "black" })
   public color?: string;
@@ -66,7 +66,7 @@ class Route extends Typegoose {
   }
   //
   @instanceMethod
-  public addAssociation(this: InstanceType<Route>, association: Association) {
+  public addAssociation(this: InstanceType<Route>, association: any) {
     if (!this.associations) {
       this.associations = [];
     }

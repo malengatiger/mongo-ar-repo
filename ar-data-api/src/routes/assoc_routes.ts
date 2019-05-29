@@ -18,6 +18,8 @@ export class AssociationExpressRoutes {
           req.body.name,
           req.body.email,
           req.body.cellphone,
+          req.body.countryID,
+          req.body.countryName,
         );
         console.log("about to return result from Helper ............");
         res.status(200).json({

@@ -16,6 +16,12 @@ class Association extends Typegoose {
     public email?: string;
     @prop()
     public cellphone?: string;
+
+    @prop({required: true})
+    public countryID?: string;
+    @prop({required: true})
+    public countryName?: string;
+
     @prop({required: true, default: new Date().toISOString()})
     public created?: string;
 

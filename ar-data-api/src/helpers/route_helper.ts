@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import Association from "../models/association";
 import Route from "../models/route";
 
 export class RouteHelper {
@@ -7,51 +8,34 @@ export class RouteHelper {
     console.log(event);
     // tslint:disable-next-line: max-line-length
     console.log(
-      `operationType: 👽 👽 👽  ${
-        event.operationType
-      },  route in stream:   🍀   🍀  ${event.fullDocument.name} 🍎  _id: ${
-        event.fullDocument._id
-      } 🍎 `
-    );
-    console.log(
-      `\n👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 👽 RouteHelper: Happiness Two: 🍎 🍎  onRouteAdded, Houston!! 👽 👽 👽\n\n`
+      `operationType: 👽 👽 👽  ${event.operationType},  route in stream:  🍀  🍀  🍎 `,
     );
   }
   public static async addRoute(
     name: string,
-    associationID: string,
-    associationName: string,
-    color: string
+    assocs: string[],
+    color: string,
   ): Promise<any> {
-    console.log(
-      `\n\n🌀  🌀  🌀  RouteHelper: addRoute   🍀   ${name} -   🍀   ${associationID}   🍀   ${associationName}\n`
-    );
-    console.log(
-      // tslint:disable-next-line: max-line-length
-      `\n👽 👽 👽 👽  RouteHelper: attempting MongoDB write using Typegoose  🍎  getModelForClass  .......... 👽 👽 👽\n`
-    );
-
     const routeModel = new Route().getModelForClass(Route);
-    const u = new routeModel({
-      associationID,
-      associationName,
+    const assModel = new Association().getModelForClass(Association);
+    const list: any[] = [];
+    for (const id of assocs) {
+      const ass = await assModel.findById(id);
+      list.push(ass);
+    }
+
+    if (!color) {
+      color = "BLUE";
+    }
+    const route = new routeModel({
+      associations: list,
       color,
-      name
+      name,
     });
-    const m = await u.save();
+    const m = await route.save();
     console.log(
-      `\n\n💙  💚  💛   RouteHelper: Yebo Gogo!!!! - MongoDB has saved ${name} !!!!!  💙  💚  💛`
+      `\n\n💙 💚 💛  RouteHelper: Yebo Gogo!!!! - saved  🔆 🔆  ${name}  💙  💚  💛`,
     );
-
-    const ass = await routeModel.findByName("MongoDataX Taxi Route");
-    console.log(`💛 💛 💛 💛  Route found in Mongo: 💚  ${ass}`);
-    console.log(ass);
-    console.log(
-      `🏓  db: ${m.db.db.databaseName} 💛 💛 collection: ${
-        m.collection.collectionName
-      } 💙 💙  id: ${m.id}`
-    );
-
     return m;
   }
 

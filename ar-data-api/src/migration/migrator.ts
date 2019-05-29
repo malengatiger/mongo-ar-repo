@@ -1,13 +1,18 @@
 import { CollectionReference, Firestore, Query } from "@google-cloud/firestore";
 import * as admin from "firebase-admin";
 import { AssociationHelper } from "../helpers/association_helper";
+import { RouteHelper } from "../helpers/route_helper";
+import { VehicleHelper } from "../helpers/vehicle_helper";
 import { CityHelper, CountryHelper } from "./../helpers/country_helper";
+import { LandmarkHelper } from "./../helpers/landmark_helper";
 const z = "\n";
 console.log(
   `\n\n👺 👺 👺 🔑 Migrator: getting serviceAccount from json file  🔑 🔑...`,
 );
+// tslint:disable-next-line: no-var-requires
 const serviceAccount = require("../../ar.json");
 
+// tslint:disable-next-line: no-var-requires
 const citiesJson = require("../../cities.json");
 console.log(citiesJson);
 console.log(`📌 📌 📌 📌 📌 📌 📌 📌  `);
@@ -49,12 +54,15 @@ class Migrator {
 
     // await this.migrateCountries();
     // await this.migrateAssociations();
-    await this.migrateCities("5ced8952fc6e4ef1f1cfc7ae");
+    // await this.migrateCities("5ced8952fc6e4ef1f1cfc7ae");
+    // await this.migrateVehicleTypes();
+    // await this.migrateVehicles();
+    await this.migrateRoutes();
 
     const end = new Date().getTime();
     console.log(
       `\n\n♻️ ♻️ ♻️ ♻️ ♻️ ♻️  Migrator has finished the job:  ❤️  ${end -
-        start / 1000} seconds elapsed`,
+        start / 1000} seconds elapsed\n\n`,
     );
 
     return {
@@ -88,9 +96,11 @@ class Migrator {
     }
   }
   public static async migrateCities(countryID: string): Promise<any> {
-    console.log(`\n\n🍎 🍎 🍎  Migrating cities, countryID: ${countryID} ....... 🍎 🍎 🍎 `);
+    console.log(
+      `\n\n🍎 🍎 🍎  Migrating cities, countryID: ${countryID} ....... 🍎 🍎 🍎 `,
+    );
     const start = new Date().getTime();
-// tslint:disable-next-line: forin
+    // tslint:disable-next-line: forin
     for (const m in citiesJson) {
       const city: any = citiesJson[m];
       const x = await CityHelper.addCity(
@@ -114,27 +124,139 @@ class Migrator {
         start / 1000} seconds elapsed`,
     );
   }
-  private static countries: any = [];
-
-  private static async migrateAssociations(): Promise<any> {
-    console.log(`\n 🍎  Migrating associations .............`);
+  public static async migrateAssociations(): Promise<any> {
+    console.log(`\n\n🍎  Migrating associations .............`);
     const qs = await fs.collection("associations").get();
-    console.log(`associations found:  🍎 ${qs.docs.length}`);
+    console.log(`associations found:  🍎  ${qs.docs.length}`);
 
+    const countryID = "5ced8952fc6e4ef1f1cfc7ae";
+    const countryName = "South Africa";
+    let cnt = 0;
     for (const doc of qs.docs) {
       const data: any = doc.data();
       console.log(data);
-      const country = await AssociationHelper.addAssociation(
-        data.name,
-        data.email,
-        data.email,
+      await AssociationHelper.addAssociation(
+        data.associationName,
+        "info@association.com",
+        data.phone,
+        countryID,
+        countryName,
       );
-      this.countries.push(country);
+      cnt++;
     }
-    console.log(
-      `🎸  🎸  🎸  associations added to Mongo: 🎀 ${qs.docs.length}`,
-    );
+    console.log(`\n🎸  🎸  🎸  associations added to Mongo: 🎀 ${cnt}`);
   }
+  public static async migrateVehicles(): Promise<any> {
+    console.log(`\n\n🍎  Migrating vehicles ............. 🍎🍎🍎`);
+    const qs = await fs.collection("vehicles").get();
+    console.log(`🍎  Firestore vehicles found:  🍎  ${qs.docs.length}`);
+
+    // get assocs from mongo
+    const assocs: any = await AssociationHelper.getAssociations();
+    console.log(`👽 👽 ${assocs.length} Associations from Mongo`);
+
+    const vehicleTypeID = "5cee5f3bc8a7cd3ee8598e43";
+    let cnt = 0;
+    for (const doc of qs.docs) {
+      const vehicle: any = doc.data();
+      console.log(vehicle);
+      for (const association of assocs) {
+        if (association.name === vehicle.associationName) {
+          await VehicleHelper.addVehicle(
+            vehicle.vehicleReg,
+            association.id,
+            association.name,
+            null,
+            vehicle.ownerName,
+            vehicleTypeID,
+            [
+              "photo1.somewhere.com storage url",
+              "photo2.somewhere.com storage url",
+            ],
+          );
+          cnt++;
+        }
+      }
+    }
+    console.log(`\n🎸  🎸  🎸  vehicles migrated to Mongo: 🎀 ${cnt} \n\n`);
+  }
+  public static async migrateVehicleTypes(): Promise<any> {
+    console.log(`\n\n🍎  Migrating vehicleTypess .............`);
+    const qs = await fs.collection("vehicleTypes").get();
+    console.log(`vehicleTypes found:  🍎  ${qs.docs.length}`);
+
+    const countryID = "5ced8952fc6e4ef1f1cfc7ae";
+    const countryName = "South Africa";
+    let cnt = 0;
+    for (const doc of qs.docs) {
+      const data: any = doc.data();
+      console.log(data);
+      await VehicleHelper.addVehicleType(
+        data.make,
+        data.model,
+        data.capacity,
+        countryID,
+        countryName,
+      );
+      cnt++;
+    }
+    console.log(`\n🎸  🎸  🎸  vehicleTypes added to Mongo: 🎀 ${cnt}`);
+  }
+  public static async migrateRoutes(): Promise<any> {
+    console.log(`\n\n🍎  Migrating routes ............. 🍎🍎🍎\n\n`);
+
+    const routesQuerySnap = await fs.collection("routes").get();
+    console.log(
+      `🍎  Firestore routes found:  🍎  ${routesQuerySnap.docs.length}`,
+    );
+    const landmarksQuerySnap = await fs.collection("landmarks").get();
+    console.log(
+      `🍎  Firestore landmarks found:  🍎  ${landmarksQuerySnap.docs.length}`,
+    );
+
+    // get assocs from mongo
+    const assocs: any = await AssociationHelper.getAssociations();
+    console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  ${assocs.length} Associations from Mongo 💛 💛\n\n`);
+
+    let cnt = 0;
+    let cnt2 = 0;
+    for (const doc of routesQuerySnap.docs) {
+      const route: any = doc.data();
+      for (const association of assocs) {
+        if (association.name === route.associationName) {
+          const mRoute = await RouteHelper.addRoute(
+            route.name,
+            [association.id],
+            route.color,
+          );
+          cnt++;
+          // get all route landmarks by name and migrate
+          console.log(mRoute);
+          const list: any = [mRoute.id];
+          console.log(`route #${cnt} ....... about to loop thru landmarks ... 😍 ${mRoute.name}`);
+          for (const mdoc of landmarksQuerySnap.docs) {
+            if (mRoute.name === mdoc.data().routeName) {
+              const data = mdoc.data();
+              if (!data.latitude || !data.longitude) {
+                console.log(`\n\n👿👿👿👿👿👿👿👿👿 Missing coordinates: ${data.landmarkName} ... ignore\n\n`);
+              } else {
+              await LandmarkHelper.addLandmark(
+                data.landmarkName,
+                data.latitude,
+                data.longitude,
+                list,
+              );
+              cnt2++;
+              }
+            }
+          }
+        }
+      }
+    }
+    console.log(`\n🎸  🎸  🎸  routes migrated to Mongo: 🎀 ${cnt} \n`);
+    console.log(`\n🎸  🎸  🎸  landmarks migrated to Mongo: 🎀 ${cnt2} \n\n`);
+  }
+  private static countries: any = [];
 }
 
 export default Migrator;

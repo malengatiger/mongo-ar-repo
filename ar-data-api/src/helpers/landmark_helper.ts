@@ -8,56 +8,52 @@ export class LandmarkHelper {
     console.log(event);
     // tslint:disable-next-line: max-line-length
     console.log(
-      `operationType: 👽 👽 👽  ${
+      `\noperationType: 👽 👽 👽  ${
         event.operationType
-      },  route in stream:   🍀   🍀  ${event.fullDocument.name} 🍎  _id: ${
-        event.fullDocument._id
-      } 🍎 `,
-    );
-    console.log(
-      `\n👽 👽 👽 👽 👽 👽 👽  LandmarkHelper: Happiness Two: 🍎 🍎  onRouteAdded, Houston!! 👽 👽 👽\n\n`,
+      },  landmark in stream:   🍀   🍀  ${
+        event.fullDocument.landmarkName
+      } 🍎  `,
     );
   }
   public static async addLandmark(
     name: string,
     latitude: number,
     longitude: number,
-    color: string,
     routes: string[],
   ): Promise<any> {
-
-    console.log(
-      `\n👽 👽 👽 👽  LandmarkHelper: MongoDB write using Typegoose  🍎  getModelForClass  .......... 👽 👽 👽\n`,
-    );
+    if (!latitude || !longitude) {
+      throw new Error("Missing coordinates");
+    }
     const landmarkModel = new Landmark().getModelForClass(Landmark);
     const routeModel = new Route().getModelForClass(Route);
     const list: Route[] = [];
     for (const routeId of routes) {
-      const route = await routeModel.findById(routeId);
+      const route: any = await routeModel.findById(routeId);
+      console.log(
+        `\n\nRoute from Mongo : 😍 😍 😍  id: ${route.id}  🌀  ${
+          route.name
+        }  😍 😍 😍`,
+      );
       list.push(route);
     }
-    const u = new landmarkModel({
-      color,
-      location: {
+    console.log(`....... 😍 😍 😍  about to add landmark: ${name}`);
+    const landmark = new landmarkModel({
+      landmarkName: name,
+      position: {
         coordinates: [longitude, latitude],
         type: "Point",
       },
-      name,
       routes: list,
     });
-    const m = await u.save();
-    console.log(
-      `\n\n💙  💚  💛   LandmarkHelper: Yebo Gogo!!!! - MongoDB has saved ${name} !!!!!  💙  💚  💛`,
-    );
-
-    const ass = await landmarkModel.findByName("MongoDataX Taxi Route");
-    console.log(`💛 💛 💛 💛  Route found in Mongo: 💚  ${ass}`);
-    console.log(ass);
-
+    const m = await landmark.save();
+    console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  Landmark added  🍎  ${name} \n\n`);
     return m;
   }
 
-  public static async addRoute(landmarkID: string, routeID: string): Promise<any> {
+  public static async addRoute(
+    landmarkID: string,
+    routeID: string,
+  ): Promise<any> {
     console.log(` 🌀 findAll ....   🌀  🌀  🌀 `);
     const landmarkModel = new Landmark().getModelForClass(Landmark);
     const routeModel = new Route().getModelForClass(Route);
@@ -75,7 +71,9 @@ export class LandmarkHelper {
     console.log(` 🌀 LandmarkHelper: findAll ....   🌀  🌀  🌀 `);
     const landmarkModel = new Landmark().getModelForClass(Landmark);
     const list = await landmarkModel.find();
-    console.log(` 🌀 LandmarkHelper: findAll .... found: ${list.length}   🌀  🌀  🌀 `);
+    console.log(
+      ` 🌀 LandmarkHelper: findAll .... found: ${list.length}   🌀  🌀  🌀 `,
+    );
 
     console.log(list);
     return list;
@@ -85,24 +83,35 @@ export class LandmarkHelper {
     longitude: number,
     radiusInKM: number,
   ) {
-    console.log(`findByLocation ....${latitude} ${longitude}`);
-    const METERS_PER_KM = 1000;
+    // tslint:disable-next-line: max-line-length
+    console.log(
+      `\n💦 💦  find landmarks ByLocation .... 🔆 lat: ${latitude}  🔆 lng: ${longitude} radiusInKM: ${radiusInKM}`,
+    );
+    const RADIUS = radiusInKM * 1000;
     const landmarkModel = new Landmark().getModelForClass(Landmark);
-    const list: any = await landmarkModel.find({
-      location: {
-        $nearSphere: {
-          $geometry: {
-            coordinates: [longitude, latitude],
-            type: "Point",
+    const list: any = await landmarkModel
+      .find({
+        position: {
+          $near: {
+            $geometry: {
+              coordinates: [longitude, latitude],
+              type: "Point",
+            },
+            $maxDistance: RADIUS,
           },
-          $maxDistance: radiusInKM * METERS_PER_KM,
         },
-      },
-    }).catch((err) => {
-      console.error(err);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    console.log(
+      `\n🏓  🏓  landmarks found by location & radius:  ${
+        list.length
+      }  💙 💚 💛\n`,
+    );
+    list.forEach((m) => {
+      console.log(`💙 💚 💛  ${m.landmarkName} 🔆🔆 ${m.position.coordinates}`);
     });
-    console.log(` 🏓  🏓  landmarks found ${list.length}`);
-    console.log(list);
     return list;
   }
 }

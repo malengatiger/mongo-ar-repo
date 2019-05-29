@@ -18,7 +18,6 @@ export class LandmarkExpressRoutes {
           req.body.name,
           req.body.latitude,
           req.body.longitude,
-          req.body.color,
           req.body.routes,
         );
         res.status(200).json({
@@ -40,9 +39,9 @@ export class LandmarkExpressRoutes {
       console.log(req.body);
       try {
         const result = await LandmarkHelper.findByLocation(
-          req.body.latitude,
-          req.body.longitude,
-          req.body.radiusInKM,
+          parseFloat(req.body.latitude),
+          parseFloat(req.body.longitude),
+          parseFloat(req.body.radiusInKM),
         );
         res.status(200).json({
           message: `🏓  🏓  🏓  findLandmarksByLocation: OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,

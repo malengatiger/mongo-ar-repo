@@ -31,6 +31,27 @@ export class VehicleExpressRoutes {
         Util.sendError(res, err);
       }
     });
+    app.route("/addVehicleType").post(async (req: Request, res: Response) => {
+      console.log(
+        `\n\n💦  POST: /addVehicleType requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+      );
+      console.log(req.body);
+      try {
+        const result = await VehicleHelper.addVehicleType(
+          req.body.make,
+          req.body.model,
+          req.body.capacity,
+          req.body.countryID,
+          req.body.countryName,
+        );
+        res.status(200).json({
+          message: `🏓  🏓  addVehicleType: ${req.body.vehicleReg} OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+          result,
+        });
+      } catch (err) {
+        Util.sendError(res, err);
+      }
+    });
     app.route("/findVehiclesByLocation").post(
       async (req: Request, res: Response) => {
       console.log(

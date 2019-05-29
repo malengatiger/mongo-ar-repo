@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import {  Request, Response } from "express";
 import Migrator from "../migration/migrator";
 
-export class AppExpressRoutes {
+export class AppExpressRoutes  {
   public routes(app): void {
     console.log(
       `\n\n🏓 🏓 🏓 🏓 🏓    AppExpressRoutes:  💙  setting up default home routes ...`,

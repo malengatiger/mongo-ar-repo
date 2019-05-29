@@ -1,3 +1,4 @@
+import Moment from "moment";
 import City from "../models/city";
 import Country from "../models/Country";
 
@@ -90,23 +91,52 @@ export class CityHelper {
     longitude: number,
     radiusInKM: number,
   ): Promise<any> {
-    console.log(`\n🌀 🌳 🌳 🌳  getCitiesByLocation ....  lat: ${latitude}  lng: ${longitude} 🌀 🌀 🌀\n`);
+    console.log(
+      `\n🌀 🌳 🌳 🌳  getCitiesByLocation ....  lat: ${latitude}  lng: ${longitude} 🌀 🌀 🌀\n`,
+    );
     const CityModel = new City().getModelForClass(City);
 
+    const start = new Date().getTime();
+    const cutoff = Moment()
+      .subtract(2, "years")
+      .toISOString();
+    console.log(`☘️  geoQuery cutoff date:  ☘️   ☘️   ☘️  ${cutoff}`);
+    const RADIUS = radiusInKM * 1000;
     const mList = await CityModel.find({
+      created: { $gt: cutoff },
       position: {
         $near: {
-          $geometry: { coordinates: [longitude, latitude], type: "Point" },
-          $maxDistance: radiusInKM * 1000,
+          $geometry: {
+            coordinates: [longitude, latitude],
+            type: "Point",
+          },
+          $maxDistance: RADIUS,
         },
       },
     });
-    console.log(`\n\n🍎 🍎 🍎 Cities found within: 🍎 ${radiusInKM * 1000} metres:  🌳 🌳 🌳 ${mList.length} cities`);
+    const end = new Date().getTime();
+    const elapsed = `${(end - start) / 1000} seconds elapsed`;
+    console.log(
+      `\n\n🍎 🍎 🍎 Cities found within: 🍎 ${radiusInKM *
+        1000} metres:  🌳 🌳 🌳 ${mList.length} cities\n`,
+    );
+    console.log(`🍎 🍎 🍎  geoQuery took:  ☘️  ${elapsed}  ☘️ \n`);
     let cnt = 0;
     mList.forEach((m: any) => {
       cnt++;
-      console.log(`🍏 🍏  #${cnt} - ${m.name}  🔆  ${m.provinceName}  💙  ${m.countryName}`);
+      console.log(
+        `🍏 🍏  #${cnt} - ${m.name}  🔆  ${m.provinceName}  💙  ${
+          m.countryName
+        }`,
+      );
     });
+    const d = Moment().format("YYYY-MM-DDTHH:mm:ss");
+    // tslint:disable-next-line: max-line-length
+    console.log(
+      `\n🍎 🍎 🍎 Done: radius: 🍎 ${radiusInKM * 1000} metres: 🌳 🌳 🌳 ${
+        mList.length
+      } cities. 💦 💦 💦 ${d}  \n\n`,
+    );
     return mList;
   }
 }

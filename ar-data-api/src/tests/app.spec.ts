@@ -7,7 +7,7 @@ import { AssociationHelper } from "./../helpers/association_helper";
 describe("\n💀 💀 💀 💀 💀  🎈  AR MongoDB API unit tests   🎈  ☘️ 🍀", () => {
   it("\n💚  💙  💜   should return 12 afer summing 5 + 7", () => {
     console.log(
-      `\n\n💀  💀   Running fake test. 💀  🎈 🎈 🎈 🎈  just to get going ....`
+      `\n\n💀  💀   Running fake test. 💀  🎈 🎈 🎈 🎈  just to get going ....`,
     );
     const result = Util.sum(5, 7);
 

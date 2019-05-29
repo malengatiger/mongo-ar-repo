@@ -1,9 +1,10 @@
-import { VehicleExpressRoutes } from './routes/vehicle_routes';
 import * as bodyParser from "body-parser";
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import {  AppExpressRoutes } from "./routes/app_routes";
 import { LandmarkExpressRoutes } from "./routes/landmark_routes";
+import { VehicleExpressRoutes } from "./routes/vehicle_routes";
 const mPort = process.env.PORT || 3000;
 const password = process.env.MONGODB_PASSWORD || "aubrey3";
 const user = process.env.MONGODB_USER || "aubs";
@@ -11,8 +12,8 @@ const appName = "AR MongoDB API";
 const mongoConnection = `mongodb+srv://${user}:${password}@ar001-1xhdt.mongodb.net/ardb?retryWrites=true`;
 import MongoListeners from "./listeners";
 import AssociationExpressRoutes from "./routes/assoc_routes";
+import { CountryExpressRoutes } from "./routes/country_routes";
 import { RouteExpressRoutes } from "./routes/route_routes";
-import { CountryExpressRoutes } from './routes/country_routes';
 
 console.log(`\n\n\n🧡 💛   AftaRobot MongoDB API ... ☘️  starting  ☘️  ${new Date().toISOString()}   🧡 💛\n`);
 mongoose
@@ -52,6 +53,8 @@ class AftaRobotApp {
     this.appRoutes.routes(this.app);
     this.vehicleRoutes.routes(this.app);
     this.countryRoutes.routes(this.app);
+    console.log(`\n\n🦀 🦀 🦀 🦀 🦀    ---   🥦 AftaRobotApp constructor : 🥦🥦🥦 Completed: `);
+
   }
 
   public listen() {
@@ -68,6 +71,8 @@ class AftaRobotApp {
     console.log(`\n🥦 🥦  initializeMiddleware .... `);
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(cors());
+    console.log(`\n🥦 🥦  bodyParser, cors initialized OK .... 🥦 🥦`);
   }
 }
 

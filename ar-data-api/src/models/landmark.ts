@@ -73,17 +73,14 @@ class Landmark extends Typegoose {
     return this.findOne({ associationID });
   }
   //
-  @prop({ required: true, index: true, trim: true })
-  public name?: string;
+  @prop({ required: true, trim: true })
+  public landmarkName?: string;
 
   @prop({ required: true })
-  public location?: any;
+  public position?: any;
   //
   @arrayProp({ items: Route, default: [] })
   public routes?: Route[];
-  //
-  @prop({ required: true, default: "black" })
-  public color?: string;
   //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;
@@ -99,10 +96,10 @@ class Landmark extends Typegoose {
 
   @instanceMethod
   public updateLocation(this: InstanceType<Landmark>, id: string, latitude: number, longitude: number) {
-    this.location = {
+    this.position = {
       coordinates: [longitude, latitude],
       type: "Point",
-    }
+    };
     this.save();
   }
 

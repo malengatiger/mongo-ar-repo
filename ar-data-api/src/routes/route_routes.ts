@@ -16,8 +16,7 @@ export class RouteExpressRoutes {
         try {
           const result = await RouteHelper.addRoute(
             req.body.name,
-            req.body.associationID,
-            req.body.associationName,
+            req.body.associations,
             req.body.color,
           );
           console.log("about to return result from Helper ............");

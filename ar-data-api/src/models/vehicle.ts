@@ -24,23 +24,22 @@ class Vehicle extends Typegoose {
   @prop({ required: true, index: true, trim: true })
   public vehicleReg?: string;
   //
-
   @prop({ required: true, index: true, trim: true })
   public associationID?: string;
   //
   @prop({ required: true, index: true, trim: true })
   public associationName?: string;
   //
-  @prop({ required: true, trim: true, index: true })
+  @prop({ trim: true, index: true })
   public ownerID?: string;
   //
-  @prop({ required: true, trim: true })
+  @prop({ trim: true })
   public ownerName?: string;
   //
   @prop({ required: true})
   public vehicleType?: VehicleType;
   //
-  @prop({ required: true, default: []})
+  @prop({ default: []})
   public photos?: any[];
   //
   @prop({ required: true, default: new Date().toISOString() })
