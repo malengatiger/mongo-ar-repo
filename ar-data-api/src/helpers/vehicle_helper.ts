@@ -1,3 +1,4 @@
+import  moment from "moment";
 import * as mongoose from "mongoose";
 import Photo from "../models/photo";
 import Vehicle from "../models/vehicle";
@@ -120,24 +121,24 @@ export class VehicleHelper {
     withinMinutes: number,
     radiusInKM: number,
   ) {
-    console.log(`findByLocation ....${latitude} ${longitude}`);
-    const cutOff: number = new Date().getTime() - withinMinutes * 60 * 1000;
-    const METERS_PER_KM = 1000;
+    console.log(`find vehicles: lat: ${latitude} lng: ${longitude} radius: ${radiusInKM} minutes: ${withinMinutes}`);
+    const cutOff: string = moment().subtract(withinMinutes, "minutes").toISOString();
+    const METERS = radiusInKM * 1000;
     const vehicleLocationModel = new VehicleLocation().getModelForClass(
       VehicleLocation,
     );
     const list: any = await vehicleLocationModel
       .find({
+        created: { $gt: cutOff },
         position: {
-          $nearSphere: {
+          $near: {
             $geometry: {
               coordinates: [longitude, latitude],
               type: "Point",
             },
-            $maxDistance: radiusInKM * METERS_PER_KM,
+            $maxDistance: METERS,
           },
         },
-        timestamp: { $gt: cutOff },
       })
       .catch((err) => {
         console.error(err);

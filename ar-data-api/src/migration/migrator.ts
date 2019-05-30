@@ -47,6 +47,7 @@ async function getCollections() {
 getCollections();
 
 // 5ced8952fc6e4ef1f1cfc7ae = countryID
+// TODO - ♻️ ♻️ build route point migration : May 30, 2019
 class Migrator {
   public static async start() {
     console.log(`\n\n......Migrator is starting up ... ❤️  ❤️  ❤️  ....\n`);

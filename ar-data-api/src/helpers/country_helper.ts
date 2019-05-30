@@ -86,24 +86,19 @@ export class CityHelper {
     const list = await CityModel.find({ countryID });
     return list;
   }
-  public static async getCitiesByLocation(
+  public static async findCitiesByLocation(
     latitude: number,
     longitude: number,
     radiusInKM: number,
   ): Promise<any> {
     console.log(
-      `\n🌀 🌳 🌳 🌳  getCitiesByLocation ....  lat: ${latitude}  lng: ${longitude} 🌀 🌀 🌀\n`,
+      `\n🌳 🌳 🌳  findCitiesByLocation: lat: ${latitude}  lng: ${longitude} 🌀 🌀 🌀`,
     );
     const CityModel = new City().getModelForClass(City);
 
     const start = new Date().getTime();
-    const cutoff = Moment()
-      .subtract(2, "years")
-      .toISOString();
-    console.log(`☘️  geoQuery cutoff date:  ☘️   ☘️   ☘️  ${cutoff}`);
     const RADIUS = radiusInKM * 1000;
     const mList = await CityModel.find({
-      created: { $gt: cutoff },
       position: {
         $near: {
           $geometry: {
@@ -117,7 +112,7 @@ export class CityHelper {
     const end = new Date().getTime();
     const elapsed = `${(end - start) / 1000} seconds elapsed`;
     console.log(
-      `\n\n🍎 🍎 🍎 Cities found within: 🍎 ${radiusInKM *
+      `\n🍎 🍎 🍎 Cities found within: 🍎 ${radiusInKM *
         1000} metres:  🌳 🌳 🌳 ${mList.length} cities\n`,
     );
     console.log(`🍎 🍎 🍎  geoQuery took:  ☘️  ${elapsed}  ☘️ \n`);

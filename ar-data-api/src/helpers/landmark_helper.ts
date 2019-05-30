@@ -1,3 +1,4 @@
+import { getDistance } from "geolib";
 import { BulkWriteOpResultObject } from "mongodb";
 import * as mongoose from "mongoose";
 import Landmark from "../models/landmark";
@@ -40,7 +41,11 @@ export class LandmarkHelper {
           },
         });
       } else {
-        console.warn(`\n\n👿👿👿👿👿👿👿👿👿👿👿👿👿 coordinates missing for ${m.landmarkName} 👿👿👿👿👿👿👿`);
+        console.warn(
+          `\n\n👿👿👿👿👿👿👿👿👿👿👿👿👿 coordinates missing for ${
+            m.landmarkName
+          } 👿👿👿👿👿👿👿`,
+        );
       }
     }
     console.log(
@@ -63,7 +68,10 @@ export class LandmarkHelper {
       );
       console.log(res);
     } catch (e) {
-      console.error(`👿👿👿👿👿👿👿 Something fucked up! 👿👿👿👿👿👿👿👿\n`, e);
+      console.error(
+        `👿👿👿👿👿👿👿 Something fucked up! 👿👿👿👿👿👿👿👿\n`,
+        e,
+      );
     }
   }
   public static async addLandmark(
@@ -164,6 +172,33 @@ export class LandmarkHelper {
       const route = m.routes[0];
       console.log(`💙 💚  ${m.landmarkName}  🍎 ${route.name}  💛`);
     });
+    console.log(
+      `\n\n🌺 🌸 🌺 🌸 🌺 🌸 🌺 🌸   Calculated distances between landmarks   🌺 🌸 🌺 🌸 🌺 🌸\n`,
+    );
+    this.calculateDistances(list, latitude, longitude);
+    console.log(list);
     return list;
+  }
+  private static async calculateDistances(
+    landmarks: any[],
+    latitude: number,
+    longitude: number,
+  ) {
+    const from = {
+      latitude,
+      longitude,
+    };
+
+    for (const m of landmarks) {
+      const to = {
+        latitude: m.position.coordinates[1],
+        longitude: m.position.coordinates[0],
+      };
+      const dist = getDistance(from, to);
+      m.distance = dist / 1000;
+      console.log(
+        `🌺 🌸  ${dist / 1000} km 💛 🍎  ${m.landmarkName}  🍀  ${m.routes[0].name}`,
+      );
+    }
   }
 }

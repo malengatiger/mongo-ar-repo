@@ -56,6 +56,11 @@ class Route extends Typegoose {
   @prop({ required: true, default: "black" })
   public color?: string;
   //
+  @prop({ default: [] })
+  public rawRoutePoints?: any[];
+  @prop({ default: [] })
+  public routePoints?: any[];
+  //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;
   //

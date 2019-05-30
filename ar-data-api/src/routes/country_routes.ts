@@ -61,15 +61,15 @@ export class CountryExpressRoutes {
         Util.sendError(res, err);
       }
     });
+    //
     app
       .route("/findCitiesByLocation")
       .post(async (req: Request, res: Response) => {
         console.log(
-          `\n\n💦  POST: /findCitiesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
+          `\n\n💦  POST: /findCitiesByLocation requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}  💦`,
         );
-        console.log(req.body);
         try {
-          const result = await CityHelper.getCitiesByLocation(
+          const result = await CityHelper.findCitiesByLocation(
             parseFloat(req.body.latitude),
             parseFloat(req.body.longitude),
             parseFloat(req.body.radiusInKM),
