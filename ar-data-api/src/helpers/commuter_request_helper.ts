@@ -20,7 +20,7 @@ export class CommuterRequestHelper {
     request: any,
   ): Promise<any> {
     const commuterRequestModel = new CommuterRequest().getModelForClass(CommuterRequest);
-    console.log(`....... 😍 😍 😍  about to add CommuterRequest: 👽 👽 👽`);
+    console.log(`....... 😍 😍 😍  about to add CommuterRequest:  👽 👽 👽`);
     console.log(request);
     const commuterRequest = new commuterRequestModel({
       autoDetected: request.autoDetected,
