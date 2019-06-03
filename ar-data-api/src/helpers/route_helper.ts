@@ -1,13 +1,14 @@
 import * as mongoose from "mongoose";
 import Association from "../models/association";
 import Route from "../models/route";
-
+// TODO - build web map with 🍎 🍎 🍎 Javascript Maps API for creating manual snap feature
 export class RouteHelper {
   public static async onRouteAdded(event: any) {
     // tslint:disable-next-line: max-line-length
     console.log(
       `\n👽 👽 👽 onRouteChangeEvent: operationType: 👽 👽 👽  ${
-        event.operationType},  route in stream:  🍀  🍀  🍎 `,
+        event.operationType
+      },  route in stream:  🍀  🍀  🍎 `,
     );
   }
   public static async addRoute(

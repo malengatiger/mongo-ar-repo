@@ -40,10 +40,6 @@ class Route extends Typegoose {
     this: ModelType<Route> & typeof Route,
     associationID: string,
   ) {
-    console.log(
-      "#####  🥦  🥦  🥦 Finding route by associationID:  💦  💦  💦  :: 🥦 " +
-        associationID,
-    );
     return this.findOne({ associationID });
   }
   //

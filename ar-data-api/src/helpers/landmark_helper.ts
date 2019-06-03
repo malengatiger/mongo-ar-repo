@@ -146,6 +146,7 @@ export class LandmarkHelper {
     console.log(
       `\n💦 💦  find landmarks ByLocation .... 🔆 lat: ${latitude}  🔆 lng: ${longitude} radiusInKM: ${radiusInKM}`,
     );
+    const start = new Date().getTime();
     const RADIUS = radiusInKM * 1000;
     const landmarkModel = new Landmark().getModelForClass(Landmark);
     const list: any = await landmarkModel
@@ -163,20 +164,26 @@ export class LandmarkHelper {
       .catch((err) => {
         console.error(err);
       });
+    const end = new Date().getTime();
     console.log(
-      `\n🏓  🏓  landmarks found by location & radius:  ${
+      `\n🏓  🏓  landmarks found:   🌺 ${
         list.length
-      }  💙 💚 💛\n`,
+      }  elapsed: 💙  ${(end - start) / 1000} seconds  💙 💚 💛\n`,
     );
     list.forEach((m) => {
       const route = m.routes[0];
       console.log(`💙 💚  ${m.landmarkName}  🍎 ${route.name}  💛`);
     });
     console.log(
-      `\n\n🌺 🌸 🌺 🌸 🌺 🌸 🌺 🌸   Calculated distances between landmarks   🌺 🌸 🌺 🌸 🌺 🌸\n`,
+      `\n\n🌺 🌸  Calculated distances between landmarks   🌺 🌸 🌺 🌸 🌺 🌸\n`,
     );
     this.calculateDistances(list, latitude, longitude);
     console.log(list);
+    console.log(
+      `\n💙 💙 💙 💙 💙 landmarks found:  🌸  ${
+        list.length
+      }  elapsed: 💙  ${(end - start) / 1000} seconds  💙 💚 💛\n`,
+    );
     return list;
   }
   private static async calculateDistances(

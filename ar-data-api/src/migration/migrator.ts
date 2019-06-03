@@ -3,6 +3,7 @@ import * as admin from "firebase-admin";
 import { AssociationHelper } from "../helpers/association_helper";
 import { RouteHelper } from "../helpers/route_helper";
 import { VehicleHelper } from "../helpers/vehicle_helper";
+import { CommuterRequestHelper } from "./../helpers/commuter_request_helper";
 import { CityHelper, CountryHelper } from "./../helpers/country_helper";
 import { LandmarkHelper } from "./../helpers/landmark_helper";
 const z = "\n";
@@ -48,6 +49,7 @@ getCollections();
 
 // 5ced8952fc6e4ef1f1cfc7ae = countryID
 // TODO - ♻️ ♻️ build route point migration : May 30, 2019
+// TODO - 🌸 🌸 migrate the rest of Firestore database -  🌸  🌸  🌸
 class Migrator {
   public static async start() {
     console.log(`\n\n......Migrator is starting up ... ❤️  ❤️  ❤️  ....\n`);
@@ -58,19 +60,48 @@ class Migrator {
     // await this.migrateCities("5ced8952fc6e4ef1f1cfc7ae");
     // await this.migrateVehicleTypes();
     // await this.migrateVehicles();
-    await this.migrateRoutes();
+    // await this.migrateRoutes();
+    await this.migrateCommuterRequests();
 
     const end = new Date().getTime();
     console.log(
-      `\n\n♻️ ♻️ ♻️ ♻️ ♻️ ♻️  Migrator has finished the job:  ❤️  ${(end - start) / 1000} seconds elapsed\n\n`,
+      `\n\n♻️ ♻️ ♻️ ♻️ ♻️ ♻️  Migrator has finished the job:  ❤️  ${(end -
+        start) /
+        1000} seconds elapsed\n\n`,
     );
 
     return {
-      migrator: `❤️️ ❤️ ❤️   Migrator has finished the job!  ❤️  ${(end - start) / 1000} seconds elapsed  ❤️ ❤️ ❤️`,
+      migrator: `❤️️ ❤️ ❤️   Migrator has finished the job!  ❤️  ${(end -
+        start) /
+        1000} seconds elapsed  ❤️ ❤️ ❤️`,
       xdate: new Date(),
     };
   }
 
+  public static async migrateCommuterRequests(): Promise<any> {
+    console.log(`\n\n🍎  Migrating commuter requests ........................`);
+    const qs = await fs.collection("commuterRequests").get();
+    console.log(
+      `....... Firestore commuterRequests found:  🍎 ${qs.docs.length}`,
+    );
+
+    let cnt  = 0;
+    for (const doc of qs.docs) {
+      const data: any = doc.data();
+      cnt++;
+
+      if (data.fromLandmarkId && data.routeId) {
+        const cr = await CommuterRequestHelper.addCommuterRequest(data);
+        console.log(` 🍀 🍀 🍀 #${cnt} commuter request migrated:  🍀 ${cr.createdAt}`);
+      } else {
+        console.log(`👿 some data missing, #${cnt} 👿👿👿 IGNORED`);
+      }
+
+    }
+    console.log(
+      `\n🔑 🔑 🔑   commuterRequests migrated:  🍀  ${qs.docs.length}  🍀`,
+    );
+  }
   public static async migrateCountries(): Promise<any> {
     console.log(`\n\n🍎  Migrating countries ........................`);
     const qs = await fs.collection("countries").get();
