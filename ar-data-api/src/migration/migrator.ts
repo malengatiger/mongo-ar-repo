@@ -1,5 +1,6 @@
 import { CollectionReference, Firestore, Query } from "@google-cloud/firestore";
 import * as admin from "firebase-admin";
+import polyline from "google-polyline";
 import { AssociationHelper } from "../helpers/association_helper";
 import { RouteHelper } from "../helpers/route_helper";
 import { VehicleHelper } from "../helpers/vehicle_helper";
@@ -61,7 +62,8 @@ class Migrator {
     // await this.migrateVehicleTypes();
     // await this.migrateVehicles();
     // await this.migrateRoutes();
-    await this.migrateCommuterRequests();
+    // await this.migrateCommuterRequests();
+    await this.encodePolyline();
 
     const end = new Date().getTime();
     console.log(
@@ -78,6 +80,29 @@ class Migrator {
     };
   }
 
+  public static async encodePolyline() {
+    const routeID = "-LgWJGYelWehA41IfbsS";
+    const qs = await fs.collection("newRoutes")
+    .doc(routeID).collection("routePoints").get();
+    console.log(
+      `....... Firestore routePoints found:  🍎 ${qs.docs.length}`,
+    );
+
+    const points: any = [];
+    let cnt  = 0;
+    for (const doc of qs.docs) {
+      const data: any = doc.data();
+      cnt++;
+      points.push(
+        [data.latitude, data.longitude],
+      );
+    }
+    const encoded = polyline.encode(points);
+    console.log(`🌸  🌸  🌸  encoded polyline:  🍀 ${encoded}  🍀 length: ${encoded.length}`);
+    console.log(
+      `\n🔑 🔑 🔑   route points encoded:  🍀  ${cnt}  🍀`,
+    );
+  }
   public static async migrateCommuterRequests(): Promise<any> {
     console.log(`\n\n🍎  Migrating commuter requests ........................`);
     const qs = await fs.collection("commuterRequests").get();

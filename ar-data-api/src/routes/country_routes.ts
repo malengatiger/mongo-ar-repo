@@ -46,6 +46,7 @@ export class CountryExpressRoutes {
         Util.sendError(res, err);
       }
     });
+    
     app.route("/getCountryCities").post(async (req: Request, res: Response) => {
       console.log(
         `\n\n💦  POST: /getCountryCities requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
