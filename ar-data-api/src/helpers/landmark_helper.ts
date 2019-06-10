@@ -1,6 +1,6 @@
 import { getDistance } from "geolib";
 import { BulkWriteOpResultObject } from "mongodb";
-import * as mongoose from "mongoose";
+import v1 from "uuid/v1";
 import Landmark from "../models/landmark";
 import Route from "../models/route";
 
@@ -75,37 +75,35 @@ export class LandmarkHelper {
     }
   }
   public static async addLandmark(
-    name: string,
+    landmarkName: string,
     latitude: number,
     longitude: number,
-    routes: string[],
+    routeIDs: string[],
+    routeDetails: any[],
   ): Promise<any> {
     if (!latitude || !longitude) {
       throw new Error("Missing coordinates");
     }
     const landmarkModel = new Landmark().getModelForClass(Landmark);
-    const routeModel = new Route().getModelForClass(Route);
-    const list: Route[] = [];
-    for (const routeId of routes) {
-      const route: any = await routeModel.findById(routeId);
-      console.log(
-        `\n\nRoute from Mongo : 😍 😍 😍  id: ${route.id}  🌀  ${
-          route.name
-        }  😍 😍 😍`,
-      );
-      list.push(route);
-    }
-    console.log(`....... 😍 😍 😍  about to add landmark: ${name}`);
+
+    console.log(`😍 😍 😍  about to add landmark: ${landmarkName}`);
+    const landmarkID = v1();
     const landmark = new landmarkModel({
-      landmarkName: name,
+      landmarkID,
+      landmarkName,
+      latitude,
+      longitude,
       position: {
         coordinates: [longitude, latitude],
         type: "Point",
       },
-      routes: list,
+      routeDetails,
+      routeIDs,
     });
     const m = await landmark.save();
-    console.log(`\n👽 👽 👽 👽 👽 👽 👽 👽  Landmark added  🍎  ${name} \n\n`);
+    console.log(
+      `\n👽 👽 👽 👽 👽 👽 👽 👽  Landmark added  🍎  ${landmarkName} \n\n`,
+    );
     return m;
   }
 
@@ -113,17 +111,24 @@ export class LandmarkHelper {
     landmarkID: string,
     routeID: string,
   ): Promise<any> {
-    console.log(` 🌀 findAll ....   🌀  🌀  🌀 `);
+    console.log(` 🌀 addRoute to landmark; landmarkID: ${landmarkID} routeID: ${routeID} ....   🌀  🌀  🌀 `);
     const landmarkModel = new Landmark().getModelForClass(Landmark);
     const routeModel = new Route().getModelForClass(Route);
 
-    const route = await routeModel.findById(routeID);
+    const route: any = await routeModel.findByRouteID(routeID);
     console.log(route);
-    const mark: any = await landmarkModel.findById(landmarkID);
+    const mark: any = await landmarkModel.findByLandmarkID(landmarkID);
     if (!mark.routes) {
       mark.routes = [];
     }
-    mark.routes.push(route);
+    if (!mark.routeDetails) {
+      mark.routeDetails = [];
+    }
+    mark.routes.push(route.routeID);
+    mark.routeDetails.push({
+      routeID: route.routeID,
+      routeName: route.name,
+    });
   }
 
   public static async findAll(): Promise<any> {
@@ -166,9 +171,9 @@ export class LandmarkHelper {
       });
     const end = new Date().getTime();
     console.log(
-      `\n🏓  🏓  landmarks found:   🌺 ${
-        list.length
-      }  elapsed: 💙  ${(end - start) / 1000} seconds  💙 💚 💛\n`,
+      `\n🏓  🏓  landmarks found:   🌺 ${list.length}  elapsed: 💙  ${(end -
+        start) /
+        1000} seconds  💙 💚 💛\n`,
     );
     list.forEach((m) => {
       const route = m.routes[0];
@@ -204,7 +209,9 @@ export class LandmarkHelper {
       const dist = getDistance(from, to);
       m.distance = dist / 1000;
       console.log(
-        `🌺 🌸  ${dist / 1000} km 💛 🍎  ${m.landmarkName}  🍀  ${m.routes[0].name}`,
+        `🌺 🌸  ${dist / 1000} km 💛 🍎  ${m.landmarkName}  🍀  ${
+          m.routes[0].name
+        }`,
       );
     }
   }

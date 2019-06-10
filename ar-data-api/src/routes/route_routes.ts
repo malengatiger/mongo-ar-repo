@@ -38,7 +38,7 @@ export class RouteExpressRoutes {
         `\n\n💦  POST: /getRoutes requested .... 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
       );
       try {
-        const result = await RouteHelper.getRoutes( );
+        const result = await RouteHelper.getRoutes();
         console.log("\n................ about to return result from Helper ............");
         console.log(result);
         res.status(200).json({

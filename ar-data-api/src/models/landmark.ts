@@ -9,8 +9,6 @@ import {
   staticMethod,
   Typegoose,
 } from "typegoose";
-import Association from "./association";
-import Route from "./route";
 
 class Landmark extends Typegoose {
   @staticMethod
@@ -31,11 +29,12 @@ class Landmark extends Typegoose {
     routeName: string,
   ) {
     console.log(
-      "#####  🥦  🥦  🥦 Finding landmark by associationName:  💦  💦  💦  :: 🥦 " +
+      "#####  🥦  🥦  🥦 Finding landmark by routeName:  💦  💦  💦  :: 🥦 " +
         routeName,
     );
-    return this.findOne({ associationName: routeName });
+    return this.findOne({ routeName });
   }
+  
   //
   @staticMethod
   public static findByRouteID(
@@ -43,56 +42,50 @@ class Landmark extends Typegoose {
     routeID: string,
   ) {
     console.log(
-      "#####  🥦  🥦  🥦 Finding landmark by associationID:  💦  💦  💦  :: 🥦 " +
+      "#####  🥦  🥦  🥦 Finding landmark by routeID:  💦  💦  💦  :: 🥦 " +
         routeID,
     );
-    return this.findOne({ associationID: routeID });
+    return this.find({ routes: [routeID] });
   }
   //
   @staticMethod
-  public static findByAssociationName(
+  public static findByLandmarkID(
     this: ModelType<Landmark> & typeof Landmark,
-    associationName: string,
+    landmarkID: string,
   ) {
     console.log(
-      "#####  🥦  🥦  🥦 Finding landmark by associationName:  💦  💦  💦  :: 🥦 " +
-        associationName,
+      "#####  🥦  🥦  🥦 Finding landmark by landmarkID:  💦  💦  💦  : 🥦 " +
+        landmarkID,
     );
-    return this.findOne({ associationName });
+    return this.find({ landmarkID });
   }
   //
-  @staticMethod
-  public static findByAssociationID(
-    this: ModelType<Landmark> & typeof Landmark,
-    associationID: string,
-  ) {
-    console.log(
-      "#####  🥦  🥦  🥦 Finding route by associationID:  💦  💦  💦  :: 🥦 " +
-        associationID,
-    );
-    return this.findOne({ associationID });
-  }
-  //
+
   @prop({ required: true, trim: true })
   public landmarkName?: string;
+  @prop({ required: true, index: true, trim: true })
+  public landmarkID?: string;
+
+  @prop({ required: true })
+  public latitude?: number;
+  @prop({ required: true })
+  public longitude?: number;
 
   @prop({ required: true })
   public position?: any;
   //
-  @arrayProp({ items: Route, default: [] })
-  public routes?: Route[];
+  @prop({ required: true, default: 0 })
+  public rankSequenceNumber?: number;
+  //
+  @prop({ required: true, default: [] })
+  public routeIDs?: string[];
+  //
+  @prop({ required: true, default: [] })
+  public routeDetails?: any[];
   //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;
   //
-  @instanceMethod
-  public addRoute(this: InstanceType<Landmark>, route: Route) {
-    if (!this.routes) {
-      this.routes = [];
-    }
-    this.routes.push(route);
-    this.save();
-  }
 
   @instanceMethod
   public updateLocation(this: InstanceType<Landmark>, id: string, latitude: number, longitude: number) {

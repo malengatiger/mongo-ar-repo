@@ -8,7 +8,6 @@ import {
   staticMethod,
   Typegoose,
 } from "typegoose";
-import Association from "./association";
 
 class Route extends Typegoose {
   @staticMethod
@@ -43,18 +42,33 @@ class Route extends Typegoose {
     return this.findOne({ associationID });
   }
   //
-  @prop({ index: true, trim: true })
+  @staticMethod
+  public static findByRouteID(
+    this: ModelType<Route> & typeof Route,
+    routeID: string,
+  ) {
+    return this.findOne({ routeID });
+  }
+  //
+  @prop({ required: true, trim: true })
   public name?: string;
   //
-  @prop({ required: true })
-  public associations?: any[];
+  @prop({ required: true, index: true, trim: true })
+  public routeID?: string;
+  //
+  @prop({ required: true, default: [] })
+  public associationDetails?: any[];
+
+  @prop({ required: true, default: [] })
+  public associationIDs?: string[];
   //
   @prop({ required: true, default: "black" })
   public color?: string;
   //
-  @prop({ default: [] })
+  @prop({ required: true, default: [] })
   public rawRoutePoints?: any[];
-  @prop({ default: [] })
+  //
+  @prop({ required: true, default: [] })
   public routePoints?: any[];
   //
   @prop({ required: true, default: new Date().toISOString() })
@@ -67,12 +81,28 @@ class Route extends Typegoose {
   }
   //
   @instanceMethod
-  public addAssociation(this: InstanceType<Route>, association: any) {
-    if (!this.associations) {
-      this.associations = [];
+  public async addAssociation(
+    this: InstanceType<Route>,
+    associationID: string,
+  ) {
+    const route = await this.getModelForClass(Route).findByAssociationID(
+      associationID,
+    );
+    if (!this.associationIDs) {
+      this.associationIDs = [];
     }
-    this.associations.push(association);
-    this.save();
+    let isFound = false;
+    route.associationIDs.forEach((id) => {
+      if (id === associationID) {
+        isFound = true;
+      }
+    });
+    if (!isFound) {
+      this.associationIDs.push(associationID);
+      this.save();
+    } else {
+      throw new Error("Association already in route list");
+    }
   }
 }
 

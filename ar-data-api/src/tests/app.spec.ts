@@ -41,7 +41,7 @@ describe("\n💀 💀 💀 💀 💀  🎈  AR MongoDB API unit tests   🎈  �
     const ass = new Association();
     ass.cellphone = "099 666 5437";
     ass.email = "aubrs@ggmail.com";
-    ass.name = "Taxi Association " + new Date().getTime();
+    ass.associationName = "Taxi Association " + new Date().getTime();
     expect(ass).to.not.equal(null);
 
     // const result = await AssociationHelper.addAssociation(ass.name, ass.email, ass.cellphone);

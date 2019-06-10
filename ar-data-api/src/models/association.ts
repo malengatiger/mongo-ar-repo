@@ -1,5 +1,4 @@
 
-import * as mongoose from "mongoose";
 import { instanceMethod, InstanceType, ModelType, prop, staticMethod, Typegoose } from "typegoose";
 
 class Association extends Typegoose {
@@ -9,19 +8,29 @@ class Association extends Typegoose {
       console.log("#####  🥦  🥦  🥦 Finding association by name:  💦  💦  💦  :: 🥦 " + name);
       return this.findOne({ name });
     }
+    @staticMethod
+    public static findByAssociationID(this: ModelType<Association> & typeof Association, associationID: string) {
+      console.log("#####  🥦  🥦  🥦 Finding association by ID:  💦  💦  💦  :: 🥦 " + associationID);
+      return this.findOne({ associationID });
+    }
 
-    @prop({required: true, index: true, unique: true, trim: true})
-    public name?: string;
+    @prop({required: true, unique: true, trim: true})
+    public associationName?: string;
     @prop()
     public email?: string;
+    //
     @prop()
     public cellphone?: string;
 
-    @prop({required: true})
+    @prop({required: true, trim: true})
     public countryID?: string;
+    //
+    @prop({required: true, trim: true})
+    public associationID?: string;
+    //
     @prop({required: true})
     public countryName?: string;
-
+    //
     @prop({required: true, default: new Date().toISOString()})
     public created?: string;
 

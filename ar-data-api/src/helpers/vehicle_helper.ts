@@ -1,5 +1,5 @@
-import  moment from "moment";
-import * as mongoose from "mongoose";
+import moment from "moment";
+import v1 from "uuid/v1";
 import Photo from "../models/photo";
 import Vehicle from "../models/vehicle";
 import VehicleLocation from "../models/vehicle_location";
@@ -31,7 +31,7 @@ export class VehicleHelper {
     );
 
     const vehicleTypeModel = new VehicleType().getModelForClass(VehicleType);
-    const type: any = await vehicleTypeModel.findById(vehicleTypeID);
+    const type: any = await vehicleTypeModel.getVehicleTypeByID(vehicleTypeID);
     if (!type) {
       const msg = "Vehicle Type not found";
       console.log(`👿👿👿👿 ${msg} 👿👿👿👿`);
@@ -49,12 +49,14 @@ export class VehicleHelper {
         list.push(photo);
       }
     }
+    const vehicleID = v1();
     const vehicle = new vehicleModel({
       associationID,
       associationName,
       ownerID,
       ownerName,
       photos: list,
+      vehicleID,
       vehicleReg,
       vehicleType: type,
     });
@@ -81,6 +83,7 @@ export class VehicleHelper {
       `\n\n🌀 🌀  VehicleHelper: addVehicleType  🍀  ${make} ${model} capacity: ${capacity}\n`,
     );
 
+    const vehicleTypeID = v1();
     const vehicleTypeModel = new VehicleType().getModelForClass(VehicleType);
     const u = new vehicleTypeModel({
       capacity,
@@ -88,6 +91,7 @@ export class VehicleHelper {
       countryName,
       make,
       model,
+      vehicleTypeID,
     });
 
     const m = await u.save();

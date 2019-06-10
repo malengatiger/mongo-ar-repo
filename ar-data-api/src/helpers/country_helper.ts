@@ -1,4 +1,5 @@
 import Moment from "moment";
+import v1 from "uuid/v1";
 import City from "../models/city";
 import Country from "../models/Country";
 
@@ -21,9 +22,17 @@ export class CountryHelper {
       `\n\n🌀  🌀  🌀  CountryHelper: addCountry   🍀   ${name}   🍀 \n`,
     );
 
+    if (!countryCode) {
+      countryCode = "TBD";
+    }
+    if (name === "South Africa")  {
+      countryCode = "ZA";
+    }
     const CountryModel = new Country().getModelForClass(Country);
+    const countryID = v1();
     const u = new CountryModel({
       countryCode,
+      countryID,
       name,
     });
     const m = await u.save();
@@ -65,7 +74,9 @@ export class CityHelper {
       coordinates: [longitude, latitude],
       type: "Point",
     };
+    const cityID = v1();
     const u = new cityModel({
+      cityID,
       countryID,
       countryName,
       latitude,

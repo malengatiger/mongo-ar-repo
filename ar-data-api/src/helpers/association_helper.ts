@@ -1,33 +1,35 @@
-import * as mongoose from "mongoose";
+import v1 from "uuid/v1";
 import Association from "../models/association";
 
 export class AssociationHelper {
   public static async addAssociation(
-    name: string,
+    associationName: string,
     email: string,
     cellphone: string,
     countryID: string,
     countryName: string,
   ): Promise<any> {
     console.log(
-      `\n\n🌀  🌀  🌀  AssocHelper: addAssociation   🍀   ${name} -   🍀   ${cellphone}   🍀   ${email}\n`,
+      `\n\n🌀  🌀  🌀  AssocHelper: addAssociation   🍀   ${associationName} -   🍀   ${cellphone}   🍀   ${email}\n`,
     );
     console.log(
       // tslint:disable-next-line: max-line-length
       `\n👽 👽 👽 👽  AssocHelper: attempting MongoDB write using Typegoose  🍎  getModelForClass  .......... 👽 👽 👽\n`,
     );
 
+    const associationID =  v1();
     const associationModel = new Association().getModelForClass(Association);
     const assocModel = new associationModel({
+      associationID,
+      associationName,
       cellphone,
       countryID,
       countryName,
       email,
-      name,
     });
     const m = await assocModel.save();
     console.log(
-      `\n\n💙  💚  💛   AssocHelper: Yebo Gogo!!!! - MongoDB has saved ${name} !!!!!  💙  💚  💛`,
+      `\n\n💙  💚  💛   AssocHelper: Yebo Gogo!!!! - MongoDB has saved ${associationName} !!!!!  💙  💚  💛`,
     );
 
     const ass = await associationModel.findByName(

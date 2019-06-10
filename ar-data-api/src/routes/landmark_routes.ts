@@ -15,13 +15,14 @@ export class LandmarkExpressRoutes {
       console.log(req.body);
       try {
         const result = await LandmarkHelper.addLandmark(
-          req.body.name,
+          req.body.landmarkName,
           req.body.latitude,
           req.body.longitude,
-          req.body.routes,
+          req.body.routeIDs,
+          req.body.routeDetails,
         );
         res.status(200).json({
-          message: `🏓  🏓  🏓  association: ${req.body.name} : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+          message: `🏓  🏓  🏓  landmark: ${req.body.name} : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
           result,
         });
       } catch (err) {

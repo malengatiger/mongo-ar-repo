@@ -23,11 +23,14 @@ class Country extends Typegoose {
     // coulf be list, routes can have same or similar names for each association
   }
   //
-  @prop({ required: true, index: true, trim: true })
+  @prop({ required: true, index: true, trim: true, unique: true })
   public name?: string;
 
   @prop({ required: true, default: "ZA" })
   public countryCode?: string;
+
+  @prop({ required: true, unique: true, index: true, trim: true })
+  public countryID?: string;
   //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;
