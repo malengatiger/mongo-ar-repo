@@ -32,22 +32,25 @@ class _DashboardState extends State<Dashboard> {
     _getSavedCountry();
     _getRoutes();
     _getLandmarks();
-
   }
-  _getSavedCountry()  async {
+
+  _getSavedCountry() async {
     print('_getSavedCountry  😡😡😡😡😡😡  ...........................');
     country = await Prefs.getCountry();
-    if (country != null)  {
-      debugPrint(' 🧩 🧩 🧩 🧩 Getting local cities for 😡  ${country.name} ...');
+    if (country != null) {
+      debugPrint(
+          ' 🧩 🧩 🧩 🧩 Getting local cities for 😡  ${country.name} ...');
       loaderBloc.getLocalCities(countryID: country.countryID);
     }
   }
+
   Future _getCountries() async {
     countries = await loaderBloc.getLocalCountries();
     if (countries.isEmpty) {
       await loaderBloc.getRemoteCountriesAndLoad();
     }
   }
+
   List<RouteDTO> routes = List();
   List<LandmarkDTO> landmarks = List();
 
@@ -57,12 +60,14 @@ class _DashboardState extends State<Dashboard> {
       await loaderBloc.getRemoteRoutesAndLoad();
     }
   }
+
   Future _getLandmarks() async {
     landmarks = await loaderBloc.getLocalLandmarks();
     if (landmarks.isEmpty) {
       await loaderBloc.getRemoteLandmarksAndLoad();
     }
   }
+
   void _getSettings() async {
     appID = await getAppID();
     databaseName = await getDatabaseName();
@@ -95,7 +100,7 @@ class _DashboardState extends State<Dashboard> {
           style: Styles.whiteBoldMedium,
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(80),
+          preferredSize: Size.fromHeight(120),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -103,22 +108,36 @@ class _DashboardState extends State<Dashboard> {
                 Text(
                   'This app loads data from MongoDB (Atlas) in the cloud to the local, on-device database  (MongoDB Mobile). This will help with user data costs.',
                   style: Styles.whiteSmall,
-                )
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                GestureDetector(
+                    onTap: _loadCountries,
+                    child: Text(
+                      country == null ? '' : country.name,
+                      style: Styles.whiteBoldLarge,
+                    )),
               ],
             ),
           ),
         ),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.refresh), onPressed: _refresh,),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _refresh,
+          ),
         ],
       ),
       backgroundColor: Colors.brown[50],
-      bottomNavigationBar: navItems.length > 1? BottomNavigationBar(
-        items: navItems,
-        key: Key('navBar'),
-        elevation: 8,
-        onTap: _onNavTapped,
-      ) : Container(),
+      bottomNavigationBar: navItems.length > 1
+          ? BottomNavigationBar(
+              items: navItems,
+              key: Key('navBar'),
+              elevation: 8,
+              onTap: _onNavTapped,
+            )
+          : Container(),
       body: Stack(
         children: <Widget>[
           Padding(
@@ -131,48 +150,47 @@ class _DashboardState extends State<Dashboard> {
                     child: Row(
                       children: <Widget>[
                         StreamBuilder<List<CountryDTO>>(
-                          stream: loaderBloc.countryStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              numCountries = snapshot.data.length;
-                            }
-                            return GestureDetector(
-                                onTap: _loadCountries,
-                                child: DashCard(
-                                  number: numCountries,
-                                  caption: 'Countries',
-                                  numberStyle: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 28,
-                                      color: Colors.deepOrange[300]),
-                                ));
-                          }
-                        ), //countries
+                            stream: loaderBloc.countryStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                numCountries = snapshot.data.length;
+                              }
+                              return GestureDetector(
+                                  onTap: _loadCountries,
+                                  child: DashCard(
+                                    number: numCountries,
+                                    caption: 'Countries',
+                                    numberStyle: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 28,
+                                        color: Colors.deepOrange[300]),
+                                  ));
+                            }), //countries
                         SizedBox(
                           width: 8,
                         ),
                         StreamBuilder<List<CityDTO>>(
-                          stream: loaderBloc.cityStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              numCities = snapshot.data.length;
-                            }
-                            return GestureDetector(
-                              onTap: ()  {
-                                print('cities onTap: 👽 👽 👽 👽 👽 👽 👽 👽 ');
-                                _checkCities();
-                              },
-                              child: DashCard(
-                                number: numCities,
-                                caption: 'Cities',
-                                numberStyle: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 28,
-                                    color: Colors.blue[300]),
-                              ),
-                            );
-                          }
-                        ), //cities
+                            stream: loaderBloc.cityStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                numCities = snapshot.data.length;
+                              }
+                              return GestureDetector(
+                                onTap: () {
+                                  print(
+                                      'cities onTap: 👽 👽 👽 👽 👽 👽 👽 👽 ');
+                                  _checkCities();
+                                },
+                                child: DashCard(
+                                  number: numCities,
+                                  caption: 'Cities',
+                                  numberStyle: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 28,
+                                      color: Colors.blue[300]),
+                                ),
+                              );
+                            }), //cities
                       ],
                     ),
                   ),
@@ -181,46 +199,44 @@ class _DashboardState extends State<Dashboard> {
                     child: Row(
                       children: <Widget>[
                         StreamBuilder<List<RouteDTO>>(
-                          stream: loaderBloc.routeStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              numRoutes = snapshot.data.length;
-                            }
-                            return GestureDetector(
-                              onTap: _loadRoutes,
-                              child: DashCard(
-                                number: numRoutes,
-                                caption: 'Routes',
-                                numberStyle: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 28,
-                                    color: Colors.teal[300]),
-                              ),
-                            );
-                          }
-                        ),
+                            stream: loaderBloc.routeStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                numRoutes = snapshot.data.length;
+                              }
+                              return GestureDetector(
+                                onTap: _loadRoutes,
+                                child: DashCard(
+                                  number: numRoutes,
+                                  caption: 'Routes',
+                                  numberStyle: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 28,
+                                      color: Colors.teal[300]),
+                                ),
+                              );
+                            }),
                         SizedBox(
                           width: 8,
                         ),
                         StreamBuilder<List<LandmarkDTO>>(
-                          stream: loaderBloc.landmarkStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              numLandmarks = snapshot.data.length;
-                            }
-                            return GestureDetector(
-                              onTap: _loadLandmarks,
-                              child: DashCard(
-                                number: numLandmarks,
-                                caption: 'Landmarks',
-                                numberStyle: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 28,
-                                    color: Colors.purple[300]),
-                              ),
-                            );
-                          }
-                        ), //landmarks
+                            stream: loaderBloc.landmarkStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                numLandmarks = snapshot.data.length;
+                              }
+                              return GestureDetector(
+                                onTap: _loadLandmarks,
+                                child: DashCard(
+                                  number: numLandmarks,
+                                  caption: 'Landmarks',
+                                  numberStyle: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 28,
+                                      color: Colors.purple[300]),
+                                ),
+                              );
+                            }), //landmarks
                       ],
                     ),
                   ),
@@ -255,27 +271,31 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-
   CountryDTO country;
   void _checkCities() async {
     print('👽 👽 👽 checking country, then getting cities');
     country = await Prefs.getCountry();
-    if  (country != null) {
+    if (country != null) {
       print('country  ${country.name} in cache ... get cities');
       var list = await loaderBloc.getLocalCities(countryID: country.countryID);
       print('😡 ${list.length}  😡 😡 😡  cities found');
-    }  else {
+    } else {
       print('👽 country NOT in cache ...');
     }
   }
+
   void _loadCountries() async {
     debugPrint('🐼  _loadCountries  🐻 🐻 🐻');
     if (countries.isEmpty) {
       await _getCountries();
     }
     mPrint('🌀 🌀 🌀 🌀 navigate to .... 🔴 start CityLoader');
-    Navigator.push(context, SlideRightRoute(widget: CityLoader(countries: countries,)));
-
+    Navigator.push(
+        context,
+        SlideRightRoute(
+            widget: CityLoader(
+          countries: countries,
+        )));
   }
 
   void _loadCities() {
@@ -297,8 +317,8 @@ class _DashboardState extends State<Dashboard> {
   void _refresh() {
     debugPrint('🏈  🏈  🏈  refresh data from local DB ...  🏈  🏈  🏈 ');
   }
-  List<CountryDTO> countries = List();
 
+  List<CountryDTO> countries = List();
 
   void _buildNavItems() {
     navItems.add(BottomNavigationBarItem(
@@ -313,17 +333,18 @@ class _DashboardState extends State<Dashboard> {
       icon: Icon(Icons.location_on),
       title: Text('Landmarks'),
     ));
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   void _onNavTapped(int value) {
     print('_onNavTapped, value: $value');
     switch (value) {
       case 0:
-        Navigator.push(context, SlideRightRoute(
-          widget: TownSearch(),
-        ));
+        Navigator.push(
+            context,
+            SlideRightRoute(
+              widget: TownSearch(),
+            ));
         break;
       case 1:
 //        Navigator.push(context, SlideRightRoute(
@@ -331,14 +352,15 @@ class _DashboardState extends State<Dashboard> {
 //        ));
         break;
       case 2:
-        Navigator.push(context, SlideRightRoute(
-          widget: LandmarkSearch(),
-        ));
+        Navigator.push(
+            context,
+            SlideRightRoute(
+              widget: LandmarkSearch(),
+            ));
         break;
     }
   }
 }
-
 
 class DashCard extends StatelessWidget {
   final String caption;
@@ -387,6 +409,7 @@ class DashCard extends StatelessWidget {
       ),
     );
   }
+
   String _format(int number) {
     final formatter = new NumberFormat("#,###");
     return formatter.format(number);

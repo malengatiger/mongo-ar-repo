@@ -56,6 +56,7 @@ class _LandmarkSearchState extends State<LandmarkSearch> {
       key: _key,
       appBar: AppBar(
         title: Text('Landmark Search'),
+        elevation: 8,
         backgroundColor: Colors.pink[300],
         actions: <Widget>[
           IconButton(
@@ -64,80 +65,33 @@ class _LandmarkSearchState extends State<LandmarkSearch> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(260),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        child: Text(
-                            'Use Atlas database to search for Landmarks using current location. Check for speed and accuracy!'
-                        , style: Styles.whiteSmall,),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Text(_location == null? '': '${_location.coords.latitude}, ${_location.coords.longitude}',
-                style: Styles.blackBoldMedium,),
-                SizedBox(
-                  height: 12,
-                ),
-                Results(
-                  count: count,
-                  message: message,
-                  elapsed: elapsed,
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Container(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Slider(
-                        value: radius,
-                        min: 2,
-                        max: 40,
-                        onChanged: _onSliderChanged,
-                        divisions: 4,
-                        onChangeEnd: _onSliderChangeEnded,
-                      ),
-                      Text('$radius', style: Styles.blueBoldMedium,),
-                      SizedBox(width: 4,),
-                      Text('km'),
-                      SizedBox(width: 40,),
-                      IconButton(icon: Icon(Icons.done),
-                      onPressed: () {
-                        _startSearch();
-                      },),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          preferredSize: Size.fromHeight(280),
+          child: _buildBottomChild(),
         ),
       ),
+      backgroundColor: Colors.pink[50],
       body: Stack(
         children: <Widget>[
-          isBusy? Center(child: BusyCard()) : Container(),
+          isBusy? Center(child: BusyCard(
+            indicatorColor: Colors.teal[300],
+            cardColor: Colors.pink[50],
+          )) : Container(),
           isBusy? Container() : ListView.builder(
             itemCount: _landmarks.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(_landmarks.elementAt(index).landmarkName),
-                subtitle: Text('${_landmarks.elementAt(index).distance}'),
-                leading: Icon(Icons.create),
-                onTap: () {
-                  debugPrint('🔴🔴 landmark tapped: 💚 ${_landmarks.elementAt(index).landmarkName} 💚 ${_landmarks.elementAt(index).landmarkID} ');
-                },);
+              return Padding(
+                padding: const EdgeInsets.only(left:8.0, right: 8),
+                child: Card(
+                  elevation: 3,
+                  child: ListTile(
+                    title: Text(_landmarks.elementAt(index).landmarkName),
+                    subtitle: Text('${_landmarks.elementAt(index).distance}'),
+                    leading: Icon(Icons.location_city, color: Colors.grey[400],),
+                    onTap: () {
+                      debugPrint('🔴🔴 landmark tapped: 💚 ${_landmarks.elementAt(index).landmarkName} 💚 ${_landmarks.elementAt(index).landmarkID} ');
+                    },),
+                ),
+              );
             },
           ),
         ],
@@ -162,19 +116,85 @@ class _LandmarkSearchState extends State<LandmarkSearch> {
     });
     _startSearch();
   }
+
+  Widget _buildBottomChild() {
+
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: Text(
+                    'Use Atlas database to search for Landmarks using current location. Check for speed and accuracy!'
+                    , style: Styles.whiteSmall,),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Text(_location == null? '': '${_location.coords.latitude}, ${_location.coords.longitude}',
+            style: Styles.blackBoldMedium,),
+          SizedBox(
+            height: 12,
+          ),
+          Results(
+            count: count,
+            message: message,
+            elapsed: elapsed,
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Container(
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(width: 20,),
+                Text('$radius', style: Styles.blueBoldMedium,),
+                SizedBox(width: 4,),
+                Text('km'),
+                SizedBox(width: 4,),
+                Slider(
+                  value: radius,
+                  min: 2,
+                  max: 40,
+                  onChanged: _onSliderChanged,
+                  divisions: 4,
+                  onChangeEnd: _onSliderChangeEnded,
+                ),
+
+                SizedBox(width: 8,),
+                IconButton(icon: Icon(Icons.done),
+                  onPressed: () {
+                    _startSearch();
+                  },),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+  }
 }
 
 class BusyCard extends StatelessWidget {
   final String title;
-  final Color color;
+  final Color indicatorColor, cardColor;
 
-  const BusyCard({Key key, this.title, this.color}) : super(key: key);
+  const BusyCard({Key key, this.title, this.indicatorColor, this.cardColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 16,
-      color: color == null? Colors.pink[50] : color,
+      color: cardColor == null? Colors.white : cardColor,
       child: Container(
         height: 300, width: 300,
         child: Column(
@@ -185,8 +205,8 @@ class BusyCard extends StatelessWidget {
           Container(
             height: 80, width: 80,
             child: CircularProgressIndicator(
-              backgroundColor: color == null? Colors.pink : color,
-              strokeWidth: 20,
+              backgroundColor: indicatorColor == null? Colors.pink : indicatorColor,
+              strokeWidth: 40,
             ),
           ),
 

@@ -67,7 +67,7 @@ class _TownSearchState extends State<TownSearch> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(260),
+          preferredSize: Size.fromHeight(280),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -104,6 +104,11 @@ class _TownSearchState extends State<TownSearch> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
+                      SizedBox(width: 4,),
+                      Text('$radius', style: Styles.pinkBoldMedium,),
+                      SizedBox(width: 4,),
+                      Text('km'),
+                      SizedBox(width: 24,),
                       Slider(
                         value: radius,
                         min: 2,
@@ -112,10 +117,8 @@ class _TownSearchState extends State<TownSearch> {
                         divisions: 4,
                         onChangeEnd: _onSliderChangeEnded,
                       ),
-                      Text('$radius', style: Styles.blueBoldMedium,),
-                      SizedBox(width: 4,),
-                      Text('km'),
-                      SizedBox(width: 40,),
+
+                      SizedBox(width: 8,),
                       IconButton(icon: Icon(Icons.done),
                         onPressed: () {
                           _startSearch();
@@ -128,19 +131,29 @@ class _TownSearchState extends State<TownSearch> {
           ),
         ),
       ),
+      backgroundColor: Colors.brown[50],
       body: Stack(
         children: <Widget>[
-          isBusy? Center(child: BusyCard()) : Container(),
+          isBusy? Center(child: BusyCard(
+            indicatorColor: Colors.red[700],
+            cardColor: Colors.teal[50],
+          )) : Container(),
           isBusy? Container() : ListView.builder(
             itemCount: _cities.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(_cities.elementAt(index).name),
-                subtitle: Text('${_cities.elementAt(index).distance}'),
-                leading: Icon(Icons.create),
-                onTap: () {
-                  debugPrint('🔴🔴 city tapped: 💚 ${_cities.elementAt(index).name} 💚 ${_cities.elementAt(index).cityID} ');
-                },);
+              return Padding(
+                padding: const EdgeInsets.only(left:8.0, right: 8),
+                child: Card(
+                  elevation: 2,
+                  child: ListTile(
+                    title: Text(_cities.elementAt(index).name),
+                    subtitle: Text('${_cities.elementAt(index).distance}'),
+                    leading: Icon(Icons.airline_seat_flat_angled, color: Colors.grey[300],),
+                    onTap: () {
+                      debugPrint('🔴🔴 city tapped: 💚 ${_cities.elementAt(index).name} 💚 ${_cities.elementAt(index).cityID} ');
+                    },),
+                ),
+              );
             },
           ),
         ],
