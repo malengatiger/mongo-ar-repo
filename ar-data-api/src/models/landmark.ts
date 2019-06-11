@@ -83,6 +83,9 @@ class Landmark extends Typegoose {
   @prop({ required: true, default: [] })
   public routeDetails?: any[];
   //
+  @prop({ trim: true })
+  public distance?: string;
+  //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;
   //

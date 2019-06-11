@@ -28,7 +28,7 @@ export class VehicleExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "addVehicle failed");
       }
     });
     app.route("/addVehicleType").post(async (req: Request, res: Response) => {
@@ -49,7 +49,7 @@ export class VehicleExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "addVehicleType failed");
       }
     });
     app.route("/findVehiclesByLocation").post(
@@ -71,7 +71,7 @@ export class VehicleExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "findVehiclesByLocation failed");
       }
     });
     app.route("/getVehiclesByAssociation").post(
@@ -89,7 +89,7 @@ export class VehicleExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "getVehiclesByAssociation failed");
       }
     });
     app.route("/getVehiclesByOwner").post(
@@ -107,7 +107,7 @@ export class VehicleExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "getVehiclesByOwner failed");
       }
     });
     app.route("/getAllVehicles").post(
@@ -122,7 +122,7 @@ export class VehicleExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "getAllVehicles failed");
       }
     });
 

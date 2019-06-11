@@ -1,7 +1,8 @@
-import {  Request, Response } from "express";
+import { Request, Response } from "express";
 import Migrator from "../migration/migrator";
+import Util from "./util";
 
-export class AppExpressRoutes  {
+export class AppExpressRoutes {
   public routes(app): void {
     console.log(
       `\n\n🏓 🏓 🏓 🏓 🏓    AppExpressRoutes:  💙  setting up default home routes ...`,
@@ -25,11 +26,15 @@ export class AppExpressRoutes  {
       console.log(
         `\n\n💦  /startMigrator!. 💦 💦 💦 💦 💦 💦  ${new Date().toISOString()}`,
       );
-      const result = await Migrator.start();
-      res.status(200).json({
-        message: `🏓  🏓  startMigrator : 💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
-        result,
-      });
+      try {
+        const result = await Migrator.start();
+        res.status(200).json({
+          message: `🏓  🏓  startMigrator : 💙  ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+          result,
+        });
+      } catch (e) {
+        Util.sendError(res, e, "StartMigrator failed");
+      }
     });
   }
 }

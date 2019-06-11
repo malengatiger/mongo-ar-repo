@@ -30,6 +30,9 @@ class VehicleLocation extends Typegoose {
   @prop({ required: true })
   public vehicle?: Vehicle;
   //
+  @prop({ trim: true })
+  public distance?: string;
+  //
   @prop({ required: true, default: new Date().toISOString() })
   public created?: string;
   //

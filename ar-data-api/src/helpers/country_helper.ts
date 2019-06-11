@@ -1,3 +1,4 @@
+import { getDistance } from "geolib";
 import Moment from "moment";
 import v1 from "uuid/v1";
 import City from "../models/city";
@@ -25,7 +26,7 @@ export class CountryHelper {
     if (!countryCode) {
       countryCode = "TBD";
     }
-    if (name === "South Africa")  {
+    if (name === "South Africa") {
       countryCode = "ZA";
     }
     const CountryModel = new Country().getModelForClass(Country);
@@ -92,9 +93,12 @@ export class CityHelper {
   }
 
   public static async getCities(countryID: string): Promise<any> {
-    console.log(`\n🌀 getCities ....   🌀  🌀  🌀 `);
+    console.log(`\n🌀🌀🌀🌀  CountryHelper:  😡  getCities ....   🌀🌀🌀 `);
     const CityModel = new City().getModelForClass(City);
     const list = await CityModel.find({ countryID });
+    console.log(
+      `😡  😡  😡  😡  😡  Done reading cities ....found:  ${list.length}`,
+    );
     return list;
   }
   public static async findCitiesByLocation(
@@ -131,9 +135,7 @@ export class CityHelper {
     mList.forEach((m: any) => {
       cnt++;
       console.log(
-        `🍏 🍏  #${cnt} - ${m.name}  🔆  ${m.provinceName}  💙  ${
-          m.countryName
-        }`,
+        `🍏  #${cnt} - ${m.name}  🔆  ${m.provinceName}  💙  ${m.countryName}`,
       );
     });
     const d = Moment().format("YYYY-MM-DDTHH:mm:ss");
@@ -143,6 +145,32 @@ export class CityHelper {
         mList.length
       } cities. 💦 💦 💦 ${d}  \n\n`,
     );
-    return mList;
+    const m = await this.calculateDistances(mList, latitude, longitude);
+    return m;
+  }
+  private static async calculateDistances(
+    cities: any[],
+    latitude: number,
+    longitude: number,
+  ): Promise<any> {
+    const from = {
+      latitude,
+      longitude,
+    };
+
+    for (const m of cities) {
+      const to = {
+        latitude: m.position.coordinates[1],
+        longitude: m.position.coordinates[0],
+      };
+      const dist = getDistance(from, to);
+      const f = new Intl.NumberFormat("en-za", {
+        maximumSignificantDigits: 2,
+      }).format(dist / 1000);
+      m.distance = f + " km (as the crow flies)";
+      console.log(`🌺  ${f} km 💛  ${m.name} 🍀 ${m.provinceName} 🌳 `);
+    }
+    console.log(`\n\n`);
+    return cities;
   }
 }

@@ -24,6 +24,9 @@ class City extends Typegoose {
   @prop({ required: true, index: true, trim: true })
   public cityID?: string;
   //
+  @prop({ trim: true })
+  public distance?: string;
+  //
   @prop({ required: true, index: true, trim: true })
   public countryName?: string;
   //

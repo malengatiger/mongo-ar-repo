@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AssociationHelper } from "../helpers/association_helper";
 import { LandmarkHelper } from "../helpers/landmark_helper";
+import Util from "./util";
 
 export class LandmarkExpressRoutes {
   public routes(app): void {
@@ -26,10 +27,7 @@ export class LandmarkExpressRoutes {
           result,
         });
       } catch (err) {
-        res.status(400).json({
-          error: err,
-          message: `👿 👿 👿  AR MongoDB API fucked up`,
-        });
+        Util.sendError(res, err, "addLandmark failed");
       }
     });
 
@@ -49,10 +47,7 @@ export class LandmarkExpressRoutes {
           result,
         });
       } catch (err) {
-        res.status(400).json({
-          error: err,
-          message: `👿 👿 👿  AR MongoDB API fucked up`,
-        });
+        Util.sendError(res, err, "findLandmarksByLocation failed");
       }
     });
 
@@ -71,10 +66,7 @@ export class LandmarkExpressRoutes {
           result,
         });
       } catch (err) {
-        res.status(400).json({
-          error: err,
-          message: `👿 👿 👿  AR MongoDB API fucked up`,
-        });
+        Util.sendError(res, err, "addLandmarkRoute failed");
       }
     });
     app.route("/getLandmarks").post(async (req: Request, res: Response) => {
@@ -88,11 +80,7 @@ export class LandmarkExpressRoutes {
           result,
         });
       } catch (err) {
-        console.error(err);
-        res.status(400).json({
-          error: err,
-          message: `👿 👿 👿  AR MongoDB API fucked up`,
-        });
+        Util.sendError(res, err, "getLandmarks failed");
       }
     });
 

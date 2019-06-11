@@ -154,6 +154,7 @@ export class LandmarkHelper {
     const start = new Date().getTime();
     const RADIUS = radiusInKM * 1000;
     const landmarkModel = new Landmark().getModelForClass(Landmark);
+
     const list: any = await landmarkModel
       .find({
         position: {
@@ -173,25 +174,26 @@ export class LandmarkHelper {
     console.log(
       `\n🏓  🏓  landmarks found:   🌺 ${list.length}  elapsed: 💙  ${(end -
         start) /
-        1000} seconds  💙 💚 💛\n`,
+        1000} seconds  💙 💚\n`,
     );
+
     list.forEach((m) => {
-      const route = m.routes[0];
+      const route = m.routeDetails[0];
       console.log(`💙 💚  ${m.landmarkName}  🍎 ${route.name}  💛`);
     });
     console.log(
-      `\n\n🌺 🌸  Calculated distances between landmarks   🌺 🌸 🌺 🌸 🌺 🌸\n`,
+      `\n\n🌺  Calculated distances between landmarks   🌺 🌸 \n`,
     );
     this.calculateDistances(list, latitude, longitude);
     console.log(list);
     console.log(
-      `\n💙 💙 💙 💙 💙 landmarks found:  🌸  ${
+      `\n💙 💙 💙 landmarks found:  🌸  ${
         list.length
       }  elapsed: 💙  ${(end - start) / 1000} seconds  💙 💚 💛\n`,
     );
     return list;
   }
-  private static async calculateDistances(
+  public static async calculateDistances(
     landmarks: any[],
     latitude: number,
     longitude: number,
@@ -207,10 +209,11 @@ export class LandmarkHelper {
         longitude: m.position.coordinates[0],
       };
       const dist = getDistance(from, to);
-      m.distance = dist / 1000;
+      const f = new Intl.NumberFormat("en-us", { maximumSignificantDigits: 2 }).format(dist / 1000);
+      m.distance = f + " km (as the crow flies)";
       console.log(
-        `🌺 🌸  ${dist / 1000} km 💛 🍎  ${m.landmarkName}  🍀  ${
-          m.routes[0].name
+        `🌸  ${f}  🍎  ${m.landmarkName}  🍀  ${
+          m.routeDetails[0].name
         }`,
       );
     }

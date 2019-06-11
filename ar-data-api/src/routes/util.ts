@@ -5,11 +5,11 @@ class Util {
         return num1 + num2;
     }
 
-    public static sendError(res, err) {
+    public static sendError(res, err, message: string) {
         console.error(err);
         res.status(400).json({
-          error: err,
-          message: `👿 👿 👿  AR MongoDB API fucked up`,
+          error: err.stack,
+          message,
         });
     }
 }

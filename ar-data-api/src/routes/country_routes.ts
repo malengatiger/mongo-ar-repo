@@ -25,7 +25,7 @@ export class CountryExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "addCountry failed");
       }
     });
 
@@ -43,7 +43,7 @@ export class CountryExpressRoutes {
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        Util.sendError(res, err, "getCountries failed");
       }
     });
 
@@ -55,11 +55,16 @@ export class CountryExpressRoutes {
       try {
         const result = await CityHelper.getCities(req.body.countryID);
         res.status(200).json({
-          message: `🏓  🏓 getCountryCities OK : ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
+          message: `🏓  🏓 getCountryCities:  found: ${
+            result.length
+          }: ${new Date().toISOString()}  🔆 🔆 🔆 🔆 🔆 `,
           result,
         });
       } catch (err) {
-        Util.sendError(res, err);
+        res.status(400).json({
+          error: err,
+          message: "👿👿👿👿👿👿 getCountryCities failed",
+        });
       }
     });
     //
@@ -80,7 +85,7 @@ export class CountryExpressRoutes {
             result,
           });
         } catch (err) {
-          Util.sendError(res, err);
+          Util.sendError(res, err, "findCitiesByLocation failed");
         }
       });
   }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AssociationHelper } from "../helpers/association_helper";
 import { RouteHelper } from "../helpers/route_helper";
+import Util from "./util";
 
 export class AssociationExpressRoutes {
   public routes(app): void {
@@ -27,10 +28,7 @@ export class AssociationExpressRoutes {
           result,
         });
       } catch (err) {
-        res.status(400).json({
-          error: err,
-          message: `👿 👿 👿  AR MongoDB API fucked up`,
-        });
+        Util.sendError(res, err, "addAssociation failed");
       }
     });
 
@@ -45,10 +43,7 @@ export class AssociationExpressRoutes {
           result,
         });
       } catch (err) {
-        res.status(400).json({
-          error: err,
-          message: `👿 👿 👿  AR MongoDB API fucked up`,
-        });
+        Util.sendError(res, err, "getAssociations failed");
       }
     });
   }
