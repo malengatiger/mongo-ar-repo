@@ -165,7 +165,7 @@ export class CityHelper {
       };
       const dist = getDistance(from, to);
       const f = new Intl.NumberFormat("en-za", {
-        maximumSignificantDigits: 2,
+        maximumSignificantDigits: 3,
       }).format(dist / 1000);
       m.distance = f + " km (as the crow flies)";
       console.log(`🌺  ${f} km 💛  ${m.name} 🍀 ${m.provinceName} 🌳 `);

@@ -209,7 +209,7 @@ export class LandmarkHelper {
         longitude: m.position.coordinates[0],
       };
       const dist = getDistance(from, to);
-      const f = new Intl.NumberFormat("en-us", { maximumSignificantDigits: 2 }).format(dist / 1000);
+      const f = new Intl.NumberFormat("en-us", { maximumSignificantDigits: 3 }).format(dist / 1000);
       m.distance = f + " km (as the crow flies)";
       console.log(
         `🌸  ${f}  🍎  ${m.landmarkName}  🍀  ${
