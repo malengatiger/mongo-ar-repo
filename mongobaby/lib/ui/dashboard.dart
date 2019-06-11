@@ -28,19 +28,28 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     _buildNavItems();
     _getSettings();
-    _getCountries();
-    _getSavedCountry();
-    _getRoutes();
-    _getLandmarks();
+    _freshenUp();
   }
 
+  _freshenUp() async {
+//    setState(() {
+//      isBusy = true;
+//    });
+    await _getSavedCountry();
+     _getCountries();
+     _getRoutes();
+     _getLandmarks();
+    setState(() {
+      isBusy = false;
+    });
+  }
   _getSavedCountry() async {
     print('_getSavedCountry  😡😡😡😡😡😡  ...........................');
     country = await Prefs.getCountry();
     if (country != null) {
       debugPrint(
           ' 🧩 🧩 🧩 🧩 Getting local cities for 😡  ${country.name} ...');
-      loaderBloc.getLocalCities(countryID: country.countryID);
+      await loaderBloc.getLocalCities(countryID: country.countryID);
     }
   }
 
@@ -90,6 +99,7 @@ class _DashboardState extends State<Dashboard> {
   GlobalKey<ScaffoldState> _key = GlobalKey();
   List<BottomNavigationBarItem> navItems = List();
   int numCountries = 0, numCities = 0, numRoutes = 0, numLandmarks = 0;
+  bool isBusy = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,9 +124,17 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 GestureDetector(
                     onTap: _loadCountries,
-                    child: Text(
-                      country == null ? '' : country.name,
-                      style: Styles.whiteBoldLarge,
+                    child: StreamBuilder<CountryDTO>(
+                      stream: loaderBloc.countryChangeStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          country = snapshot.data;
+                        }
+                        return Text(
+                          country == null ? '' : country.name,
+                          style: Styles.whiteBoldLarge,
+                        );
+                      }
                     )),
               ],
             ),
@@ -140,7 +158,8 @@ class _DashboardState extends State<Dashboard> {
           : Container(),
       body: Stack(
         children: <Widget>[
-          Padding(
+          isBusy? BusyCard() : Container(),
+          isBusy? Container() : Padding(
             padding: const EdgeInsets.all(12.0),
             child: Center(
               child: ListView(

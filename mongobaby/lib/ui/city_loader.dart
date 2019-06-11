@@ -176,10 +176,12 @@ class _CityLoaderState extends State<CityLoader> implements SnackBarListener {
   String _result;
   void _onMenuSelected(CountryDTO country) async {
     debugPrint('♻️♻️♻️♻️♻️ country selected: ${country.name} ♻️♻️');
-    await Prefs.saveCountry(country);
+    loaderBloc.changeCountry(country);
+
     setState(() {
       _country = country;
     });
+    loaderBloc.getLocalCities(countryID: _country.countryID);
   }
 
   void _loadCities() async {
