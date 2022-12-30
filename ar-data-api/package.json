@@ -25,7 +25,7 @@
     "@types/uuid": "^3.4.4",
     "chai": "^4.2.0",
     "express-swagger-generator": "^1.1.14",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "nodemon": "^1.19.1",
     "ts-node": "^8.2.0",
     "tslint": "^5.16.0",
